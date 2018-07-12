@@ -9,7 +9,7 @@ public class GroupChat {
     private boolean type;                       // true is mes, false is group chat
     private int admin;                          // user id of creator/admin of chat
     private static final int groupCapacity = 8;
-
+    private int report_Num;                     // number of reports this group chat has
 
     public class Message {
 
@@ -49,6 +49,7 @@ public class GroupChat {
         this.type = type;
         this.title = title;
         this.admin = id;
+        this.report_Num = 0;
         addUser(id, idToAcc);                                                          // add creator of chat to list of chat users
 
         if (titleToChat.containsKey(title) && !titleToChat.get(title).isFull()) {
@@ -82,9 +83,9 @@ private boolean checkProfanity(String m) {
     return false;
 }
 
-// delete chat if all users leave it
-public static void deleteChat(GroupChat chat) {
-    if (chat.users.size() == 0)
+// delete chat if all users leave it and update database of group chats
+public static void deleteChat(GroupChat chat, HashMap<String, GroupChat> titleToChat) {
+    titleToChat.remove(chat.title);
     chat = null;
 }
 
@@ -109,11 +110,21 @@ public void addUser(int id, HashMap<Integer, Account> idToAcc) {
 }
 
 // leave chat
-public void remove(int id, GroupChat chat, HashMap<Integer, Account> idToAcc) {
+public void removeUser(int id, HashMap<Integer, Account> idToAcc, HashMap<String, GroupChat> titleToChat) {
     if (isEmpty())
     throw new IllegalArgumentException("Empty chat!");
-    users.removeFirstOccurrence(id);
-    Account.leaveGroupChat(id, chat, idToAcc);                                                                           // updates chats assoaciated with account that left
+
+    this.users.removeFirstOccurrence(id);
+    Account.leaveGroupChat(id, this, idToAcc);                                                                           // updates chats assoaciated with account that left
+
+    if (this.users.size() == 0)
+    deleteChat(this, titleToChat);
+}
+
+public void report(HashMap<String, GroupChat> titleToChat) {
+    this.report_Num++;
+    if (this.report_Num == 7)
+    deleteChat(this, titleToChat);
 }
 
 private boolean isFull() {

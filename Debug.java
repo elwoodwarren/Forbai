@@ -329,7 +329,7 @@ public class Debug {
         groupChat0.addUser(0, idToAcc);
         groupChat0.addUser(2, idToAcc);
         groupChat0.addUser(3, idToAcc);
-        groupChat0.remove(2, groupChat0, idToAcc);
+        groupChat0.removeUser(2, idToAcc, titleToChat);
 
         groupChat0.addMessage("Do y'all like Donald Trump?", null, null, 0);
         groupChat0.addMessage("What's wrong with him?", null, null, 1);
@@ -372,8 +372,10 @@ public class Debug {
         GroupChat groupChat7 = new GroupChat(1, "I love food.", titleToChat, idToAcc);
         GroupChat groupChat8 = new GroupChat(1, "Private equity is fun.", titleToChat, idToAcc);
         GroupChat groupChat9 = new GroupChat(1, "Venture capital is fun.", titleToChat, idToAcc);
+        GroupChat.deleteChat(groupChat5, titleToChat);
+        groupChat1.removeUser(1, idToAcc, titleToChat);
 
-        GroupChat[] matches8 = SearchDiscussions.search("Trump", titleToChat);                                                  // test DiscussionSearch
+        GroupChat[] matches8 = SearchDiscussions.search("Trump", titleToChat);                                          // test DiscussionSearch
         GroupChat[] matches9 = SearchDiscussions.search("love", titleToChat);
         GroupChat[] matches10 = SearchDiscussions.search("trump", titleToChat);
 
