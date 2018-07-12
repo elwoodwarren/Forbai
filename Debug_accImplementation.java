@@ -9,7 +9,6 @@ public class Debug {
         HashMap<String, String> loginInfo = new HashMap<String, String>();
         HashMap<String, String> userToPass = new HashMap<String, String>();
         HashMap<Integer, Account> idToAcc = new HashMap<Integer, Account>();
-        Queue<Integer> suspendedAccs = new Queue<Integer>();                                                            // database of suspended accounts
 
         countries_Database.put("All", new LinkedList<Integer>());
         countries_Database.put("Afghanistan", new LinkedList<Integer>());
@@ -223,25 +222,25 @@ public class Debug {
         Account.create("Hong", "Xia", "China", "blueberry@gmail.com", "lynna_xia", "password3", false, new Picture(args[1]),
         countries_Database, interests_Database, loginInfo, userToPass, idToAcc);
 
-        Account.addInterest(0, "Food", interests_Database, idToAcc);
-        Account.addInterest(0, "Fornite", interests_Database, idToAcc);
-        Account.addInterest(0, "Lebron James", interests_Database, idToAcc);
-        Account.addInterest(0, "Drums", interests_Database, idToAcc);
-        Account.addInterest(0, "Music", interests_Database, idToAcc);
-        Account.addInterest(1, "Food", interests_Database, idToAcc);
-        Account.addInterest(1, "Culture", interests_Database, idToAcc);
-        Account.addInterest(1, "China", interests_Database, idToAcc);
-        Account.addInterest(1, "Investing", interests_Database, idToAcc);
-        Account.addInterest(2, "Music", interests_Database, idToAcc);
-        Account.addInterest(2, "Food", interests_Database, idToAcc);
-        Account.addInterest(2, "Fortnite", interests_Database, idToAcc);
-        Account.addInterest(2, "Tennis", interests_Database, idToAcc);
-        Account.addInterest(3, "China", interests_Database, idToAcc);
-        Account.addInterest(3, "Music", interests_Database, idToAcc);
-        Account.addInterest(3, "Cooking", interests_Database, idToAcc);
-        Account.addInterest(3, "Food", interests_Database, idToAcc);
+        Account.addInterest(idToAcc.get(0), "Food", interests_Database);
+        Account.addInterest(idToAcc.get(0), "Fornite", interests_Database);
+        Account.addInterest(idToAcc.get(0), "Lebron James", interests_Database);
+        Account.addInterest(idToAcc.get(0), "Drums", interests_Database);
+        Account.addInterest(idToAcc.get(0), "Music", interests_Database);
+        Account.addInterest(idToAcc.get(1), "Food", interests_Database);
+        Account.addInterest(idToAcc.get(1), "Culture", interests_Database);
+        Account.addInterest(idToAcc.get(1), "China", interests_Database);
+        Account.addInterest(idToAcc.get(1), "Investing", interests_Database);
+        Account.addInterest(idToAcc.get(2), "Music", interests_Database);
+        Account.addInterest(idToAcc.get(2), "Food", interests_Database);
+        Account.addInterest(idToAcc.get(2), "Fortnite", interests_Database);
+        Account.addInterest(idToAcc.get(2), "Tennis", interests_Database);
+        Account.addInterest(idToAcc.get(3), "China", interests_Database);
+        Account.addInterest(idToAcc.get(3), "Music", interests_Database);
+        Account.addInterest(idToAcc.get(3), "Cooking", interests_Database);
+        Account.addInterest(idToAcc.get(3), "Food", interests_Database);
 
-        Object[] matches0 = Search.search("All", "Food", countries_Database, interests_Database);                       // test Search
+        Object[] matches0 = Search.search("All", "Food", countries_Database, interests_Database);                       // test Search, deletes matches from hashmap
         Object[] matches1 = Search.search("USA", "Music", countries_Database, interests_Database);
         Object[] matches2 = Search.search("All", "Basketball", countries_Database, interests_Database);
         Object[] matches3 = Search.search("China", "Fortnite", countries_Database, interests_Database);
@@ -256,20 +255,20 @@ public class Debug {
         System.out.println("China interest accounts: " + Account.toInterestString("China", interests_Database));        // prints all China interest accounts (k + m)
         System.out.println("Investing interest accounts: " + Account.toInterestString("Investing", interests_Database));// prints all Investing interest accounts (k)
 
-        System.out.println("Warren interests: " + Arrays.toString(Account.interestList(0, idToAcc)));                      // prints all of Warren's OG interests
-        System.out.println("Kelvin interests: " + Arrays.toString(Account.interestList(1, idToAcc)));                               // prints all of Kelvin's OG interests
-        System.out.println("Turk's interests: " + Arrays.toString(Account.interestList(2, idToAcc)));                             // prints all of Nick's OG interests
-        System.out.println("Mom's interests: " + Arrays.toString(Account.interestList(3, idToAcc)));                            // prints all of Mom's OG interests
+        System.out.println("Warren interests: " + Arrays.toString(Account.interestList(idToAcc.get(0))));                      // prints all of Warren's OG interests
+        System.out.println("Kelvin interests: " + Arrays.toString(Account.interestList(idToAcc.get(1))));                               // prints all of Kelvin's OG interests
+        System.out.println("Turk's interests: " + Arrays.toString(Account.interestList(idToAcc.get(2))));                             // prints all of Nick's OG interests
+        System.out.println("Mom's interests: " + Arrays.toString(Account.interestList(idToAcc.get(3))));                            // prints all of Mom's OG interests
 
         // update interests
-        Account.removeInterest(0, "Food", interests_Database, idToAcc);
-        Account.removeInterest(0,"Music", interests_Database, idToAcc);
-        Account.removeInterest(0,"Drums", interests_Database, idToAcc);
-        Account.removeInterest(0,"Lebron James", interests_Database, idToAcc);
-        Account.removeInterest(0,"Fortnite", interests_Database, idToAcc);
-        Account.removeInterest(1,"Food", interests_Database, idToAcc);
-        Account.removeInterest(2,"Food", interests_Database, idToAcc);
-        Account.removeInterest(3,"Food", interests_Database, idToAcc);
+        Account.removeInterest(idToAcc.get(0), "Food", interests_Database);
+        Account.removeInterest(idToAcc.get(0),"Music", interests_Database);
+        Account.removeInterest(idToAcc.get(0),"Drums", interests_Database);
+        Account.removeInterest(idToAcc.get(0),"Lebron James", interests_Database);
+        Account.removeInterest(idToAcc.get(0),"Fortnite", interests_Database);
+        Account.removeInterest(idToAcc.get(1),"Food", interests_Database);
+        Account.removeInterest(idToAcc.get(2),"Food", interests_Database);
+        Account.removeInterest(idToAcc.get(3),"Food", interests_Database);
 
         Object[] matches4 = Search.search("All", "Food", countries_Database, interests_Database);                       // test Search w/updated interests
         Object[] matches5 = Search.search("USA", "Music", countries_Database, interests_Database);
@@ -286,32 +285,36 @@ public class Debug {
         System.out.println("China interest accounts: " + Account.toInterestString("China", interests_Database));        // prints all China interest accounts (k + m)
         System.out.println("Investing interest accounts: " + Account.toInterestString("Investing", interests_Database));// prints all Investing interest accounts (k)
 
-        System.out.println("Warren interests: " + Arrays.toString(Account.interestList(0, idToAcc)));               // prints all of Warren's updated interests
-        System.out.println("Kelvin interests: " + Arrays.toString(Account.interestList(1, idToAcc)));               // prints all of Kelvin's updated interests
-        System.out.println("Turk's interests: " + Arrays.toString(Account.interestList(2, idToAcc)));               // prints all of Nick's updated interests
-        System.out.println("Mom's interests: " + Arrays.toString(Account.interestList(3, idToAcc)));                // prints all of Mom's updated interests
+        System.out.println("Warren interests: " + Arrays.toString(Account.interestList(idToAcc.get(0))));               // prints all of Warren's updated interests
+        System.out.println("Kelvin interests: " + Arrays.toString(Account.interestList(idToAcc.get(1))));               // prints all of Kelvin's updated interests
+        System.out.println("Turk's interests: " + Arrays.toString(Account.interestList(idToAcc.get(2))));               // prints all of Nick's updated interests
+        System.out.println("Mom's interests: " + Arrays.toString(Account.interestList(idToAcc.get(3))));                // prints all of Mom's updated interests
 
-        System.out.println("Warren's username is: " + Account.showUser(0, idToAcc));                                // warrenelwood12
-        System.out.println("Warren's password is: " + Account.showPass(0, idToAcc));                                // password12
-        System.out.println("Mom's email is: " + Account.showEmail(3, idToAcc));                                     // blueberry@gmail.com
+        System.out.println("Warren's username is: " + Account.showUser(idToAcc.get(0)));                                // warrenelwood12
+        System.out.println("Warren's password is: " + Account.showPass(idToAcc.get(0)));                                // password12
+        System.out.println("Mom's email is: " + Account.showEmail(idToAcc.get(3)));                                     // blueberry@gmail.com
 
         // TESTS CHANGING ACCOUNT INFO
 
-        Account.changeUsername(1, "labron", userToPass, idToAcc);
-        Account.changePassword(3, "nickthefrick", loginInfo, userToPass, idToAcc);
-        Account.changeEmail(0, "weee@uo.com", loginInfo, idToAcc);
+        Account.changeUsername(idToAcc.get(1), "labron", userToPass, idToAcc);
+        Account.changePassword(idToAcc.get(3), "nickthefrick", loginInfo, userToPass, idToAcc);
+        Account.changeEmail(idToAcc.get(0), "weee@uo.com", loginInfo, idToAcc);
 
-        System.out.println("Kelvin's username is: " + Account.showUser(1, idToAcc));                                // labron
-        System.out.println("Nick's password is: " + Account.showPass(2, idToAcc));                                  // nickthefrick
-        System.out.println("Warren's email is: " + Account.showEmail(0, idToAcc));                                  // weee@uo.com
+        System.out.println("Kelvin's username is: " + Account.showUser(idToAcc.get(1)));                                // labron
+        System.out.println("Nick's password is: " + Account.showPass(idToAcc.get(2)));                                  // nickthefrick
+        System.out.println("Warren's email is: " + Account.showEmail(idToAcc.get(0)));                                  // weee@uo.com
 
-        Account.addInterest(2, "Hello Kitty", interests_Database, idToAcc);
-        System.out.println("Nick's interests: " + Arrays.toString(Account.interestList(2, idToAcc)));               // tests if interest is inserted at correct spot
+        Account.addInterest(idToAcc.get(2), "Hello Kitty", interests_Database);
+        System.out.println("Nick's interests: " + Arrays.toString(Account.interestList(idToAcc.get(2))));               // tests if interest is inserted at correct spot
 
         // TESTS CHATS/MESSAGES
-        HashMap<String, GroupChat> titleToChat = new HashMap<String, GroupChat>();
+        HashMap<String, Chat> titleToChat = new HashMap<String, Chat>();
 
-        IndividualChat indChat0 = new IndividualChat(0, 1, idToAcc);
+        Chat indChat0 = new Chat(null, true);
+        indChat0.addUser(0);
+        Account.addChat(idToAcc.get(0), indChat0);
+        indChat0.addUser(1);
+        Account.addChat(idToAcc.get(1), indChat0);
 
         indChat0.addMessage("Hey", null, null, 0);
         indChat0.addMessage("Yo whats up?", null, null, 1);
@@ -320,16 +323,22 @@ public class Debug {
         indChat0.addMessage("LEBRON TO LAKERS", null, null, 0);
         indChat0.addMessage("Flex on em boiiii", null, null, 1);
 
-        Queue<IndividualChat.Message> chatHis0 = indChat0.history();
-        for (IndividualChat.Message m : chatHis0) {
-            System.out.println(m.toVisual());                                                                          // prints all messages in indChat0
+        Queue<Chat.Message> chatHis0 = indChat0.history();
+        for (Chat.Message m : chatHis0) {
+            System.out.println(m.toVisual(m));                                                                          // prints all messages in indChat0
         }
 
-        GroupChat groupChat0 = new GroupChat(1, "Is Trump a good president?", titleToChat, idToAcc);
-        groupChat0.addUser(0, idToAcc);
-        groupChat0.addUser(2, idToAcc);
-        groupChat0.addUser(3, idToAcc);
+        Chat groupChat0 = new Chat("Is Trump a good president?", false);
+        groupChat0.addUser(0);
+        Account.addChat(idToAcc.get(0), groupChat0);
+        groupChat0.addUser(1);
+        Account.addChat(idToAcc.get(1), groupChat0);
+        groupChat0.addUser(2);
+        Account.addChat(idToAcc.get(2), groupChat0);
+        groupChat0.addUser(3);
+        Account.addChat(idToAcc.get(3), groupChat0);
         groupChat0.remove(2, groupChat0, idToAcc);
+        groupChat0.remove(1, groupChat0, idToAcc);
 
         groupChat0.addMessage("Do y'all like Donald Trump?", null, null, 0);
         groupChat0.addMessage("What's wrong with him?", null, null, 1);
@@ -338,21 +347,15 @@ public class Debug {
         groupChat0.addMessage("Yeah I like him", null, null, 0);
         groupChat0.addMessage("Homie are you dumb", null, null, 3);
 
-        Queue<GroupChat.Message> chatHis1 = groupChat0.history();
-        for (GroupChat.Message m : chatHis1) {
-            System.out.println(m.toVisual());                                                                          // prints all messages in groupChat0
+        Queue<Chat.Message> chatHis1 = groupChat0.history();
+        for (Chat.Message m : chatHis1) {
+            System.out.println(m.toVisual(m));                                                                          // prints all messages in groupChat0
         }
 
-        LinkedList<GroupChat> momChats = Account.allGroupChats(3, idToAcc);
-        for (GroupChat chat : momChats) {
-            for (GroupChat.Message m : chat.history())                                                                  // prints all messages in the chats associated with mom's account
-            System.out.println(m.toVisual());
-        }
-
-        LinkedList<IndividualChat> kelvinChats = Account.allIndChats(1, idToAcc);
-        for (IndividualChat chat : kelvinChats) {
-            for (IndividualChat.Message m : chat.history())                                                             // prints all messages in the chats associated with kelvin's account
-            System.out.println(m.toVisual());
+        LinkedList<Chat> momChats = Account.allChats(idToAcc.get(3));
+        for (Chat chat : momChats) {
+            for (Chat.Message m : chat.history())                                                                       // prints all messages in the chats associated with mom's account
+            System.out.println(m.toVisual(m));
         }
 
         for (Object user : indChat0.showUsers())
@@ -363,104 +366,68 @@ public class Debug {
         System.out.println();
 
         // TEST DISCUSSION SEARCH
-        GroupChat groupChat1 = new GroupChat(1, "I love Donald Trump.", titleToChat, idToAcc);
-        GroupChat groupChat2 = new GroupChat(1, "I hate Donald Trump!", titleToChat, idToAcc);
-        GroupChat groupChat3 = new GroupChat(1, "What are some good things Trump has done?", titleToChat, idToAcc);
-        GroupChat groupChat4 = new GroupChat(1, "I love Kendrick", titleToChat, idToAcc);
-        GroupChat groupChat5 = new GroupChat(1, "I love nice people.", titleToChat, idToAcc);
-        GroupChat groupChat6 = new GroupChat(1, "Is Trump a bad president?", titleToChat, idToAcc);
-        GroupChat groupChat7 = new GroupChat(1, "I love food.", titleToChat, idToAcc);
-        GroupChat groupChat8 = new GroupChat(1, "Private equity is fun.", titleToChat, idToAcc);
-        GroupChat groupChat9 = new GroupChat(1, "Venture capital is fun.", titleToChat, idToAcc);
 
-        GroupChat[] matches8 = SearchDiscussions.search("Trump", titleToChat);                                                  // test DiscussionSearch
-        GroupChat[] matches9 = SearchDiscussions.search("love", titleToChat);
-        GroupChat[] matches10 = SearchDiscussions.search("trump", titleToChat);
-
-        for (String t : titleToChat.keySet())
-        System.out.println(t);
-
-        System.out.println("Chat titles with 'Trump' : ");
-        for (int i = 0; i < matches8.length; i++) {
-            if (matches8[i] == null)
-            continue;
-            System.out.println(matches8[i].showTitle());
-        }
-
-        System.out.println("Chat titles with 'love' : ");
-        for (int i = 0; i < matches9.length; i++) {
-            if (matches9[i] == null)
-            continue;
-            System.out.println(matches9[i].showTitle());
-        }
-
-        System.out.println("Chat titles with 'trump' : ");
-        for (int i = 0; i < matches10.length; i++) {
-            if (matches10[i] == null)
-            continue;
-            System.out.println(matches10[i].showTitle());
-        }
 
         // TESTS EMBRACING PEOPLE
         HashMap<Integer, LinkedList<Integer>> idToEmbraceeID = new HashMap<Integer, LinkedList<Integer>>();
 
-        Account.addEmbracee(0, 1, idToEmbraceeID, idToAcc);
+        Account.addEmbracee(idToAcc.get(0), idToAcc.get(1), idToEmbraceeID);
         System.out.println("Warren's embracees are: ");
-        for (int accID : Account.showEmbracees(0, idToEmbraceeID, idToAcc))
+        for (int accID : Account.showEmbracees(idToAcc.get(0), idToEmbraceeID))
         System.out.println(accID);                                                                                      // prints all of Warren's embracees (1)
         System.out.println("Kelvin's embracees are: ");
-        for (int accID : Account.showEmbracees(1, idToEmbraceeID, idToAcc))
+        for (int accID : Account.showEmbracees(idToAcc.get(1), idToEmbraceeID))
         System.out.println(accID);                                                                                      // prints all of Kelvin's embracees (0)
 
 
-        Account.addEmbracee(2, 0, idToEmbraceeID, idToAcc);
+        Account.addEmbracee(idToAcc.get(2), idToAcc.get(0), idToEmbraceeID);
         System.out.println("Warren's embracees are: ");
-        for (int accID : Account.showEmbracees(0, idToEmbraceeID, idToAcc))
+        for (int accID : Account.showEmbracees(idToAcc.get(0), idToEmbraceeID))
         System.out.println(accID);                                                                                      // prints all of Warren's embracees (1, 2)
         System.out.println("Nick's embracees are ");
-        for (int accID : Account.showEmbracees(2, idToEmbraceeID, idToAcc))
+        for (int accID : Account.showEmbracees(idToAcc.get(2), idToEmbraceeID))
         System.out.println(accID);                                                                                      // prints all of Nick's embracees (0)
 
-        Account.addEmbracee(1, 3, idToEmbraceeID, idToAcc);
+        Account.addEmbracee(idToAcc.get(1), idToAcc.get(3), idToEmbraceeID);
         System.out.println("Kelvin's embracees are: ");
-        for (int accID : Account.showEmbracees(1, idToEmbraceeID, idToAcc))
+        for (int accID : Account.showEmbracees(idToAcc.get(1), idToEmbraceeID))
         System.out.println(accID);                                                                                      // prints all of Kelvin's embracees (0, 3)
         System.out.println("Mom's embracees are: ");
-        for (int accID : Account.showEmbracees(3, idToEmbraceeID, idToAcc))
+        for (int accID : Account.showEmbracees(idToAcc.get(3), idToEmbraceeID))
         System.out.println(accID);                                                                                      // prints all of Mom's embracees (1)
 
-        Account.addEmbracee(1, 2, idToEmbraceeID, idToAcc);
+        Account.addEmbracee(idToAcc.get(1), idToAcc.get(2), idToEmbraceeID);
         System.out.println("Kelvin's embracees are: ");
-        for (int accID : Account.showEmbracees(1, idToEmbraceeID, idToAcc))
+        for (int accID : Account.showEmbracees(idToAcc.get(1), idToEmbraceeID))
         System.out.println(accID);                                                                                      // prints all of Kelvin's embracees (0, 2, 3)
         System.out.println("Nick's embracees are: ");
-        for (int accID : Account.showEmbracees(2, idToEmbraceeID, idToAcc))                                         // prints all of Nick's embracees (0, 1)
+        for (int accID : Account.showEmbracees(idToAcc.get(2), idToEmbraceeID))                                         // prints all of Nick's embracees (0, 1)
         System.out.println(accID);
 
-        Account.removeEmbracee(0, 1, idToEmbraceeID, idToAcc);
-        Account.removeEmbracee(1, 0, idToEmbraceeID, idToAcc);
-        Account.removeEmbracee(1, 2, idToEmbraceeID, idToAcc);
-        Account.removeEmbracee(3, 1, idToEmbraceeID, idToAcc);
+        Account.removeEmbracee(idToAcc.get(0), idToAcc.get(1), idToEmbraceeID);
+        Account.removeEmbracee(idToAcc.get(1), idToAcc.get(0), idToEmbraceeID);
+        Account.removeEmbracee(idToAcc.get(1), idToAcc.get(2), idToEmbraceeID);
+        Account.removeEmbracee(idToAcc.get(3), idToAcc.get(1), idToEmbraceeID);
 
         System.out.println("Warren's embracees are: ");
-        for (int accID : Account.showEmbracees(0, idToEmbraceeID, idToAcc))
+        for (int accID : Account.showEmbracees(idToAcc.get(0), idToEmbraceeID))
         System.out.println(accID);                                                                                      // prints all of Warren's embracees (2)
         System.out.println("Kelvin's embracees are: ");
-        for (int accID : Account.showEmbracees(1, idToEmbraceeID, idToAcc))
+        for (int accID : Account.showEmbracees(idToAcc.get(1), idToEmbraceeID))
         System.out.println(accID);                                                                                      // prints all of Kelvin's embracees (none)
         System.out.println("Nick's embracees are: ");
-        for (int accID : Account.showEmbracees(2, idToEmbraceeID, idToAcc))
+        for (int accID : Account.showEmbracees(idToAcc.get(2), idToEmbraceeID))
         System.out.println(accID);                                                                                      // prints all of Nick's embracees (0)
         System.out.println("Mom's embracees are: ");
-        for (int accID : Account.showEmbracees(3, idToEmbraceeID, idToAcc))
+        for (int accID : Account.showEmbracees(idToAcc.get(3), idToEmbraceeID))
         System.out.println(accID);                                                                                      // prints all of Mom's embracees (none)
 
         // TEST REPORTING
-        Account.report(0, "They're trolling", idToAcc, suspendedAccs);
-        Account.report(1, "Spam account", idToAcc, suspendedAccs);
-        Account.report(0, "They're extremely rude", idToAcc, suspendedAccs);
-        System.out.println("Warren has " + Account.reportNum(0, idToAcc) + " reports");
-        System.out.println("Kelvin has " + Account.reportNum(1, idToAcc) + " reports");
+        Account.report(idToAcc.get(0));
+        Account.report(idToAcc.get(1));
+        Account.report(idToAcc.get(0));
+        System.out.println("Warren has " + Account.reportNum(idToAcc.get(0)) + " reports");
+        System.out.println("Kelvin has " + Account.reportNum(idToAcc.get(1)) + " reports");
 
     }
 }

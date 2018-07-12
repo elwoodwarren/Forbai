@@ -9,10 +9,8 @@ public class Account {
     private String first, last, country, email, username, password;
     private boolean gender, ambassador; // true is M, false is F for gender
     private int id; // user id
-    private String[] interests; // all interests associated with a particular acc
-    private LinkedList<GroupChat> groupchats; // all group chats associated with a particular acc
-    private LinkedList<IndividualChat> indchats;
-    private String[] reports; // reasons for the reports against this user
+    private String interests[]; // all interests associated with a particular acc
+    private LinkedList<Chat> chats; // all chats associated with a particular acc
     private int report_Num; // number of reports against this user
     private boolean suspended; // if reports > 5 then suspend acc
 
@@ -30,10 +28,8 @@ public class Account {
         this.pic = pic;
         this.ambassador = false;
         this.id = idToAcc.size(); // assign special id # to this account
-        this.groupchats = new LinkedList<GroupChat>();
-        this.indchats = new LinkedList<IndividualChat>();
+        this.chats = new LinkedList<Chat>();
         this.report_Num = 0;
-        this.reports = new String[10];
         this.suspended = false;
     }
 
@@ -57,43 +53,22 @@ public class Account {
         updateDatabases(newUser, c, countries_Database, interests_Database);
     }
 
-    // adds group chat to this account
-    public static void addGroupChat(int accID, GroupChat newChat, HashMap<Integer, Account> idToAcc) {
-        Account acc = idToAcc.get(accID);
-        acc.groupchats.addFirst(newChat);
+    // adds chat to this account
+    public static void addChat(Account acc, Chat newChat) {
+        acc.chats.addFirst(newChat);
     }
 
-    // leave group chat
-    public static void leaveGroupChat(int accID, GroupChat chat, HashMap<Integer, Account> idToAcc) {
-        Account acc = idToAcc.get(accID);
-        acc.groupchats.remove(chat);
+    // leave chat
+    public static void leaveChat(Account acc, Chat chat) {
+        acc.chats.remove(chat);
     }
 
-    // adds individual chat to this account
-    public static void addIndChat(int accID, IndividualChat newChat, HashMap<Integer, Account> idToAcc) {
-        Account acc = idToAcc.get(accID);
-        acc.indchats.addFirst(newChat);
+    // returns all chats associated with this account
+    public static LinkedList<Chat> allChats(Account acc) {
+        return acc.chats;
     }
 
-    // leave individual chat
-    public static void leaveIndChat(int accID, IndividualChat chat, HashMap<Integer, Account> idToAcc) {
-        Account acc = idToAcc.get(accID);
-        acc.indchats.remove(chat);
-    }
-
-    // returns all group chats associated with this account
-    public static LinkedList<GroupChat> allGroupChats(int accID, HashMap<Integer, Account> idToAcc) {
-        Account acc = idToAcc.get(accID);
-        return acc.groupchats;
-    }
-
-    // returns all individual chats associated with this account
-    public static LinkedList<IndividualChat> allIndChats(int accID, HashMap<Integer, Account> idToAcc) {
-        Account acc = idToAcc.get(accID);
-        return acc.indchats;
-    }
-
-    // updates interest and country database when new account is created
+    // updates interest and country database when new Account is created
     private static void updateDatabases(Account newUser, String c, HashMap<String, LinkedList<Integer>> countries_Database,
     HashMap<String, LinkedList<Integer>> interests_Database) {
         LinkedList<Integer> countryAccs = countries_Database.get(c);
@@ -112,13 +87,9 @@ public class Account {
     }
 
     // when user adds an interest, add it to hashmap (returns false if interest is null)
-    public static boolean addInterest(int accID, String interest, HashMap<String, LinkedList<Integer>> interests_Database,
-    HashMap<Integer, Account> idToAcc) {
-
-        Account acc = idToAcc.get(accID);
-
+    public static boolean addInterest(Account acc, String interest, HashMap<String, LinkedList<Integer>> interests_Database) {
         // check if interest is valid
-        if (interest == null || acc == null)
+        if (interest == null)
         return false;
 
         // if interest is not on hashmap, add it
@@ -151,14 +122,10 @@ public class Account {
 }
 
 // remove an interest (returns true if interest exist, false if interest doesn't exist)
-public static boolean removeInterest(int accID, String interest, HashMap<String, LinkedList<Integer>> interests_Database,
-HashMap<Integer, Account> idToAcc) {
-
+public static boolean removeInterest(Account acc, String interest, HashMap<String, LinkedList<Integer>> interests_Database) {
     // check if interest is valid
     if (interest == null || interests_Database.get(interest) == null)
     return false;
-
-    Account acc = idToAcc.get(accID);
 
     LinkedList<Integer> interestAccounts = interests_Database.get(interest);
     if (!interestAccounts.contains(acc.id) || interestAccounts.size() == 0)
@@ -177,10 +144,7 @@ HashMap<Integer, Account> idToAcc) {
 return true;
 }
 
-public static void addEmbracee(int accID0, int accID1, HashMap<Integer, LinkedList<Integer>> idToEmbraceeID, HashMap<Integer, Account> idToAcc) {
-    Account user0 = idToAcc.get(accID0);
-    Account user1 = idToAcc.get(accID1);
-
+public static void addEmbracee(Account user0, Account user1, HashMap<Integer, LinkedList<Integer>> idToEmbraceeID) {
     if (user0 == null || user1 == null)
     throw new IllegalArgumentException("Null arguments!");
 
@@ -222,13 +186,7 @@ public static void addEmbracee(int accID0, int accID1, HashMap<Integer, LinkedLi
     }
 }
 
-public static void removeEmbracee(int accID0, int accID1, HashMap<Integer, LinkedList<Integer>> idToEmbraceeID, HashMap<Integer, Account> idToAcc) {
-    Account user0 = idToAcc.get(accID0);
-    Account user1 = idToAcc.get(accID1);
-
-    if (user0 == null || user1 == null)
-    throw new IllegalArgumentException("Null arguments!");
-
+public static void removeEmbracee(Account user0, Account user1, HashMap<Integer, LinkedList<Integer>> idToEmbraceeID) {
     if (idToEmbraceeID.get(user0.id).size() == 0 || idToEmbraceeID.get(user1.id).size() == 0)
     throw new IllegalArgumentException("No embracees to remove!");
 
@@ -240,15 +198,12 @@ public static void removeEmbracee(int accID0, int accID1, HashMap<Integer, Linke
     idToEmbraceeID.put(user1.id, embracees1);
 }
 
-// show embracees of given user
-public static LinkedList<Integer> showEmbracees(int accID, HashMap<Integer, LinkedList<Integer>> idToEmbraceeID, HashMap<Integer, Account> idToAcc) {
-    Account acc = idToAcc.get(accID);
+public static LinkedList<Integer> showEmbracees(Account acc, HashMap<Integer, LinkedList<Integer>> idToEmbraceeID) {
     return idToEmbraceeID.get(acc.id);
 }
 
 // change email
-public static void changeEmail(int accID, String newEmail, HashMap<String, String> loginInfo, HashMap<Integer, Account> idToAcc) {
-    Account acc = idToAcc.get(accID);
+public static void changeEmail(Account acc, String newEmail, HashMap<String, String> loginInfo, HashMap<Integer, Account> idToAcc) {
     loginInfo.remove(acc.email);
     acc.email = newEmail;
     loginInfo.put(newEmail, acc.password);
@@ -256,8 +211,7 @@ public static void changeEmail(int accID, String newEmail, HashMap<String, Strin
 }
 
 // change username
-public static void changeUsername(int accID, String newUser, HashMap<String, String> userToPass, HashMap<Integer, Account> idToAcc) {
-    Account acc = idToAcc.get(accID);
+public static void changeUsername(Account acc, String newUser, HashMap<String, String> userToPass, HashMap<Integer, Account> idToAcc) {
     userToPass.remove(acc.username);
     acc.username = newUser;
     userToPass.put(newUser, acc.password);
@@ -265,61 +219,43 @@ public static void changeUsername(int accID, String newUser, HashMap<String, Str
 }
 
 // change password
-public static void changePassword(int accID, String newPass, HashMap<String, String> loginInfo, HashMap<String, String> userToPass,
+public static void changePassword(Account acc, String newPass, HashMap<String, String> loginInfo, HashMap<String, String> userToPass,
 HashMap<Integer, Account> idToAcc) {
-    Account acc = idToAcc.get(accID);
     acc.password = newPass;
     userToPass.put(acc.username, newPass);
     loginInfo.put(acc.email, newPass);
     idToAcc.put(acc.id, acc);
 }
 
-public static String showUser(int accID, HashMap<Integer, Account> idToAcc) {
-    Account acc = idToAcc.get(accID);
+public static String showUser(Account acc) {
     return acc.username;
 }
 
-public static String showFirstName(int accID, HashMap<Integer, Account> idToAcc) {
-    Account acc = idToAcc.get(accID);
-    return acc.first;
-}
-
-public static String showLastName(int accID, HashMap<Integer, Account> idToAcc) {
-    Account acc = idToAcc.get(accID);
-    return acc.last;
-}
-
-public static String showPass(int accID, HashMap<Integer, Account> idToAcc) {
-    Account acc = idToAcc.get(accID);
+public static String showPass(Account acc) {
     return acc.password;
 }
 
-public static String showEmail(int accID, HashMap<Integer, Account> idToAcc) {
-    Account acc = idToAcc.get(accID);
+public static String showEmail(Account acc) {
     return acc.email;
 }
 
-public static int showID(int accID, HashMap<Integer, Account> idToAcc) {
-    Account acc = idToAcc.get(accID);
+public static int showID(Account acc) {
     return acc.id;
 }
 
-public static void makeAmbassador(int accID, HashMap<Integer, Account> idToAcc) {
-    Account acc = idToAcc.get(accID);
+public static void makeAmbassador(Account acc) {
     acc.ambassador = true;
 }
 
 // edit profile picture
-public static void editProfPic(int accID, File file, HashMap<Integer, Account> idToAcc) {
-    Account acc = idToAcc.get(accID);
+public static void editProfPic(Account acc, File file) {
     Picture newProfPic = new Picture(file);
     acc.pic = newProfPic;
 }
 
 
 // returns a string array of interests associated with given Account
-public static String[] interestList(int accID, HashMap<Integer, Account> idToAcc) {
-    Account acc = idToAcc.get(accID);
+public static String[] interestList(Account acc) {
     return acc.interests;
 }
 
@@ -341,30 +277,53 @@ public static String toInterestString(String interest, HashMap<String, LinkedLis
     return Arrays.toString(interestIDArray);
 }
 
-// call this method when a user is reported. If a user's total # of reports reached 5, it gets suspended
-public static void report(int accID, String reason, HashMap<Integer, Account> idToAcc, Queue<Integer> suspendedAccs) {
-    Account acc = idToAcc.get(accID);
+public static void report(Account acc) {
     acc.report_Num++;
-    for (int i = 0; i < acc.reports.length; i++) {
-        if (acc.reports[i] == null)
-        acc.reports[i] = reason;
-    }
-
-    if (acc.report_Num >= 5) {
-        acc.suspended = true;
-        suspendedAccs.enqueue(accID);
-    }
+    if (acc.report_Num >= 5)
+    acc.suspended = true;
 }
 
-public static String[] showReportReasons(int accID, HashMap<Integer, Account> idToAcc) {
-    Account acc = idToAcc.get(accID);
-    return acc.reports;
-}
-
-// if an account has 3+ reports against them, they should be banned from sending messages for a day
-public static int reportNum(int accID, HashMap<Integer, Account> idToAcc) {
-    Account acc = idToAcc.get(accID);
+// if an Account has 3+ reports against them, they should be banned from sending messages for a day
+public static int reportNum(Account acc) {
     return acc.report_Num;
+}
+
+// unit testing
+public static void main(String[] args) {
+    /*    HashMap<String, LinkedList<Integer>> countries_Database = new HashMap<String, LinkedList<Integer>>();
+    HashMap<String, LinkedList<Integer>> interests_Database = new HashMap<String, LinkedList<Integer>>();
+    HashMap<String, String> loginInfo = new HashMap<String, String>();
+    HashMap<String, String> userToPass = new HashMap<String, String>();
+    countries_Database.put("USA", new LinkedList<Integer>());
+    countries_Database.put("All", new LinkedList<Integer>());
+    countries_Database.put("China", new LinkedList<Integer>());
+
+    Account warrenelwood12 = new Account("Warren", "Elwood", "USA", "warren@gmail.com",
+    "warrenelwood12", "password12", true, new Picture(args[0]), 000000000,
+    countries_Database, interests_Database, loginInfo, userToPass);
+    Account zkyu2 = new Account("Kelvin", "Yu", "China", "kelly@gmail.com",
+    "zkyu2", "kobebryant24", true, new Picture(args[1]), 000000001,
+    countries_Database, interests_Database, loginInfo, userToPass);
+    Account nturk12 = new Account("Nick", "Turk", "USA", "nickturk@gmail.com",
+    "nturk12", "rogerfreder33", true, new Picture(args[0]), 000000002,
+    countries_Database, interests_Database, loginInfo, userToPass);
+    Account lynna_xia = new Account("Hong", "Xia", "China", "blueberry@gmail.com",
+    "lynna_xia", "password3", false, new Picture(args[1]), 000000003,
+    countries_Database, interests_Database, loginInfo, userToPass);
+
+    warrenelwood12.addInterest("Food", interests_Database);
+    warrenelwood12.addInterest("Fortnite", interests_Database);
+    warrenelwood12.addInterest("Lebron James", interests_Database);
+    warrenelwood12.addInterest("Drums", interests_Database);
+    warrenelwood12.addInterest("Music", interests_Database);
+
+    LinkedList<Integer> foodAccounts = interests_Database.get("Food");
+    LinkedList<Integer> allAccounts = countries_Database.get("All");
+    for (int a : foodAccounts)
+    System.out.println(a);
+    for (int b : allAccounts)
+    System.out.println(b);
+    System.out.println(toCountryString("All", countries_Database)); */
 }
 
 }
