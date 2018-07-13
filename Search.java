@@ -29,23 +29,5 @@ public class Search {
             }
         }
         return matches;
-
-        /*  random # implementation, doesn't work b/c removing interestAccount values updates it on hashmap too
-        // iterate through LinkedLists and find 30 matches
-        int count = 0;
-        int l = 0;
-        while (count < 30 && interestAccounts.size() != 0) {
-        int index = (int) (interestAccounts.size() * Math.random());
-        if (countryAccounts.contains(interestAccounts.get(index))) {
-        matches[l] = interestAccounts.get(index);
-        interestAccounts.remove(index);
-        l++;
     }
-    else
-    interestAccounts.remove(index);
-
-    count++;
-}
-return matches; */
-}
 }
