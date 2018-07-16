@@ -1,7 +1,5 @@
 import java.util.LinkedList;
 import java.util.HashMap;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class GroupChat {
 
@@ -12,7 +10,6 @@ public class GroupChat {
     private int admin;                          // user id of creator/admin of chat
     private static final int groupCapacity = 8;
     private int report_Num;                     // number of reports this group chat has
-    private Timer timer;                        // time since the most recent message was sent
 
     public class Message {
 
@@ -53,7 +50,6 @@ public class GroupChat {
         this.title = title;
         this.admin = id;
         this.report_Num = 0;
-        this.timer = new Timer();
         addUser(id, idToAcc);                                                          // add creator of chat to list of chat users
 
         if (titleToChat.containsKey(title) && !titleToChat.get(title).isFull()) {
@@ -76,7 +72,6 @@ public void addMessage(String m, Audio v, Picture p, int id) {
     throw new IllegalArgumentException("Please help us keep group discussions a healthy place for discussion by not using profane language :)");
     Message newMsg = new Message(m, v, p, id);
     queue.enqueue(newMsg);
-    this.timer = new Timer();
 }
 
 // returns true if message contains profanity

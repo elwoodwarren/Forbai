@@ -29,7 +29,7 @@ public class Account {
         this.interests = new String[20];
         this.pic = pic;
         this.ambassador = false;
-        this.id = idToAcc.size(); // assign special id # to this account
+        this.id = idToAcc.size(); // assign unique id to this account
         this.groupchats = new LinkedList<GroupChat>();
         this.indchats = new LinkedList<IndividualChat>();
         this.report_Num = 0;
@@ -40,21 +40,42 @@ public class Account {
     // creates new account
     public static void create(String f, String l, String c, String e, String u, String p, boolean g, Picture picture,
     HashMap<String, LinkedList<Integer>> countries_Database, HashMap<String, LinkedList<Integer>> interests_Database,
-    HashMap<String, String> loginInfo, HashMap<String, String> userToPass, HashMap<Integer, Account> idToAcc) {
+    HashMap<String, String> loginInfo, HashMap<String, Integer> userToID, HashMap<Integer, Account> idToAcc) {
         // check if username and email are available
         if (!loginInfo.isEmpty()) {
             if (loginInfo.containsKey(e))
             throw new IllegalArgumentException("Email already taken!");
-            if (userToPass.containsKey(u))
+            if (userToID.containsKey(u))
             throw new IllegalArgumentException("Username already taken!");
         }
+
+        // check if username is obscene
+        checkProfanity(u);
+        checkValidity(u);
 
         Account newUser = new Account(f, l, c, e, u, p, g, picture, idToAcc);
         idToAcc.put(newUser.id, newUser);
         loginInfo.put(newUser.email, newUser.password);
-        userToPass.put(newUser.username, newUser.password);
+        userToID.put(newUser.username, newUser.id);
 
         updateDatabases(newUser, c, countries_Database, interests_Database);
+    }
+
+    // returns true if username contains profanity
+    private static void checkProfanity(String m) {
+        if (m.contains("Fuck") || m.contains("fuck") || m.contains("Shit") || m.contains("shit") || m.contains("Bitch") || m.contains("bitch")
+        || m.contains("Cunt") || m.contains("cunt") || m.contains("Nigger") || m.contains("nigger") || m.contains("Ass") || m.contains("ass")
+        || m.contains("Dick") || m.contains("dick") || m.contains("Vagina") || m.contains("vagina") || m.contains("Nigga") || m.contains("nigga"))
+        throw new IllegalArgumentException("Please pick an appropriate username.");
+    }
+
+    private static void checkValidity(String m) {
+        if (m.contains("~") || m.contains("!") || m.contains("@") || m.contains("#") || m.contains("$") || m.contains("%")
+        || m.contains("^") || m.contains("&") || m.contains("*") || m.contains("(") || m.contains(")") || m.contains("-")
+        || m.contains("+") || m.contains("=") || m.contains("[") || m.contains("]") || m.contains("{") || m.contains("}")
+        || m.contains("?") || m.contains("/") || m.contains(";") || m.contains(":") || m.contains("<") || m.contains(">")
+        || m.contains(","))
+        throw new IllegalArgumentException("Please pick an appropriate username.");
     }
 
     // adds group chat to this account
@@ -256,20 +277,18 @@ public static void changeEmail(int accID, String newEmail, HashMap<String, Strin
 }
 
 // change username
-public static void changeUsername(int accID, String newUser, HashMap<String, String> userToPass, HashMap<Integer, Account> idToAcc) {
+public static void changeUsername(int accID, String newUser, HashMap<String, Integer> userToID, HashMap<Integer, Account> idToAcc) {
     Account acc = idToAcc.get(accID);
-    userToPass.remove(acc.username);
+    userToID.remove(acc.username);
     acc.username = newUser;
-    userToPass.put(newUser, acc.password);
+    userToID.put(newUser, acc.id);
     idToAcc.put(acc.id, acc);
 }
 
 // change password
-public static void changePassword(int accID, String newPass, HashMap<String, String> loginInfo, HashMap<String, String> userToPass,
-HashMap<Integer, Account> idToAcc) {
+public static void changePassword(int accID, String newPass, HashMap<String, String> loginInfo, HashMap<Integer, Account> idToAcc) {
     Account acc = idToAcc.get(accID);
     acc.password = newPass;
-    userToPass.put(acc.username, newPass);
     loginInfo.put(acc.email, newPass);
     idToAcc.put(acc.id, acc);
 }

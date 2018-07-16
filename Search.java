@@ -4,11 +4,12 @@ import java.util.Queue;
 import java.util.Arrays;
 
 public class Search {
-    private static Object[] matches; // matches
 
     public static Object[] search(String country, String interest, HashMap<String, LinkedList<Integer>> countries_Database,
     HashMap<String, LinkedList<Integer>> interests_Database) {
-        matches = new Object[30];
+
+        Object[] matches = new Object[30];
+
         // check if interest and countries exists
         if (!interests_Database.containsKey(interest))
         return null;

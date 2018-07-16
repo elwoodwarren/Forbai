@@ -7,7 +7,7 @@ public class Debug {
         HashMap<String, LinkedList<Integer>> countries_Database = new HashMap<String, LinkedList<Integer>>();
         HashMap<String, LinkedList<Integer>> interests_Database = new HashMap<String, LinkedList<Integer>>();
         HashMap<String, String> loginInfo = new HashMap<String, String>();
-        HashMap<String, String> userToPass = new HashMap<String, String>();
+        HashMap<String, Integer> userToID = new HashMap<String, Integer>();
         HashMap<Integer, Account> idToAcc = new HashMap<Integer, Account>();
         Queue<Integer> suspendedAccs = new Queue<Integer>();                                                            // database of suspended accounts
 
@@ -215,13 +215,13 @@ public class Debug {
         // TESTS SEARCH, ACCOUNT CREATION, & ADDING/REMOVING INTERESTS
 
         Account.create("Warren", "Elwood", "USA", "warren@gmail.com", "warrenelwood12", "password12", true, new Picture(args[0]),
-        countries_Database, interests_Database, loginInfo, userToPass, idToAcc);
+        countries_Database, interests_Database, loginInfo, userToID, idToAcc);
         Account.create("Kelvin", "Yu", "China", "kelly@gmail.com", "zkyu2", "kobebyrnat24", true, new Picture(args[1]),
-        countries_Database, interests_Database, loginInfo, userToPass, idToAcc);
+        countries_Database, interests_Database, loginInfo, userToID, idToAcc);
         Account.create("Nick", "Turk", "USA", "nickturk@gmail.com", "nturk12", "rogerfreder33", true, new Picture(args[0]),
-        countries_Database, interests_Database, loginInfo, userToPass, idToAcc);
+        countries_Database, interests_Database, loginInfo, userToID, idToAcc);
         Account.create("Hong", "Xia", "China", "blueberry@gmail.com", "lynna_xia", "password3", false, new Picture(args[1]),
-        countries_Database, interests_Database, loginInfo, userToPass, idToAcc);
+        countries_Database, interests_Database, loginInfo, userToID, idToAcc);
 
         Account.addInterest(0, "Food", interests_Database, idToAcc);
         Account.addInterest(0, "Fornite", interests_Database, idToAcc);
@@ -297,8 +297,8 @@ public class Debug {
 
         // TESTS CHANGING ACCOUNT INFO
 
-        Account.changeUsername(1, "labron", userToPass, idToAcc);
-        Account.changePassword(3, "nickthefrick", loginInfo, userToPass, idToAcc);
+        Account.changeUsername(1, "labron", userToID, idToAcc);
+        Account.changePassword(3, "nickthefrick", loginInfo, idToAcc);
         Account.changeEmail(0, "weee@uo.com", loginInfo, idToAcc);
 
         System.out.println("Kelvin's username is: " + Account.showUser(1, idToAcc));                                // labron
@@ -462,7 +462,7 @@ public class Debug {
         Account.report(1, "Spam account", idToAcc, suspendedAccs);
         Account.report(0, "They're extremely rude", idToAcc, suspendedAccs);
         System.out.println("Warren has " + Account.reportNum(0, idToAcc) + " reports");
-        System.out.println("Kelvin has " + Account.reportNum(1, idToAcc) + " reports");
+        System.out.println("Kelvin has " + Account.reportNum(1, idToAcc) + " reports"); 
 
     }
 }
