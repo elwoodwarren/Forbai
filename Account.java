@@ -9,6 +9,7 @@ public class Account {
     private String first, last, country, email, username, password;
     private boolean gender, ambassador; // true is M, false is F for gender
     private int id; // user id
+    private int age; // user age
     private String[] interests; // all interests associated with a particular acc
     private LinkedList<GroupChat> groupchats; // all group chats associated with a particular acc
     private LinkedList<IndividualChat> indchats;
@@ -17,7 +18,7 @@ public class Account {
     private boolean suspended; // if reports > 5 then suspend acc
 
     // constructor
-    public Account(String first, String last, String country, String email, String username, String password,
+    public Account(String first, String last, int age, String country, String email, String username, String password,
     boolean gender, Picture pic, HashMap<Integer, Account> idToAcc) {
         this.first = first;
         this.last = last;
@@ -38,7 +39,7 @@ public class Account {
     }
 
     // creates new account
-    public static void create(String f, String l, String c, String e, String u, String p, boolean g, Picture picture,
+    public static void create(String f, String l, int a, String c, String e, String u, String p, boolean g, Picture picture,
     HashMap<String, LinkedList<Integer>> countries_Database, HashMap<String, LinkedList<Integer>> interests_Database,
     HashMap<String, String> loginInfo, HashMap<String, Integer> userToID, HashMap<Integer, Account> idToAcc) {
         // check if username and email are available
@@ -49,11 +50,14 @@ public class Account {
             throw new IllegalArgumentException("Username already taken!");
         }
 
-        // check if username is obscene
+        // check if username is allowed
         checkProfanity(u);
         checkValidity(u);
 
-        Account newUser = new Account(f, l, c, e, u, p, g, picture, idToAcc);
+        // check if above 13 years old
+        checkAge(a);
+
+        Account newUser = new Account(f, l, a, c, e, u, p, g, picture, idToAcc);
         idToAcc.put(newUser.id, newUser);
         loginInfo.put(newUser.email, newUser.password);
         userToID.put(newUser.username, newUser.id);
@@ -61,7 +65,7 @@ public class Account {
         updateDatabases(newUser, c, countries_Database, interests_Database);
     }
 
-    // returns true if username contains profanity
+    // throws error if username contains profanity
     private static void checkProfanity(String m) {
         if (m.contains("Fuck") || m.contains("fuck") || m.contains("Shit") || m.contains("shit") || m.contains("Bitch") || m.contains("bitch")
         || m.contains("Cunt") || m.contains("cunt") || m.contains("Nigger") || m.contains("nigger") || m.contains("Ass") || m.contains("ass")
@@ -69,6 +73,13 @@ public class Account {
         throw new IllegalArgumentException("Please pick an appropriate username.");
     }
 
+    // throws error if under 13
+    private static void checkAge(int a) {
+        if (a < 13)
+        throw new IllegalArgumentException("Sorry, you must be above 13 years old to make an account.");
+    }
+
+    // throws error if username contains non-valid characters
     private static void checkValidity(String m) {
         if (m.contains("~") || m.contains("!") || m.contains("@") || m.contains("#") || m.contains("$") || m.contains("%")
         || m.contains("^") || m.contains("&") || m.contains("*") || m.contains("(") || m.contains(")") || m.contains("-")

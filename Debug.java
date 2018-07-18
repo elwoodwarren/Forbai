@@ -214,13 +214,13 @@ public class Debug {
 
         // TESTS SEARCH, ACCOUNT CREATION, & ADDING/REMOVING INTERESTS
 
-        Account.create("Warren", "Elwood", "USA", "warren@gmail.com", "warrenelwood12", "password12", true, new Picture(args[0]),
+        Account.create("Warren", "Elwood", 19, "USA", "warren@gmail.com", "warrenelwood12", "password12", true, new Picture(args[0]),
         countries_Database, interests_Database, loginInfo, userToID, idToAcc);
-        Account.create("Kelvin", "Yu", "China", "kelly@gmail.com", "zkyu2", "kobebyrnat24", true, new Picture(args[1]),
+        Account.create("Kelvin", "Yu", 19, "China", "kelly@gmail.com", "zkyu2", "kobebyrnat24", true, new Picture(args[1]),
         countries_Database, interests_Database, loginInfo, userToID, idToAcc);
-        Account.create("Nick", "Turk", "USA", "nickturk@gmail.com", "nturk12", "rogerfreder33", true, new Picture(args[0]),
+        Account.create("Nick", "Turk", 20, "USA", "nickturk@gmail.com", "nturk12", "rogerfreder33", true, new Picture(args[0]),
         countries_Database, interests_Database, loginInfo, userToID, idToAcc);
-        Account.create("Hong", "Xia", "China", "blueberry@gmail.com", "lynna_xia", "password3", false, new Picture(args[1]),
+        Account.create("Hong", "Xia", 50, "China", "blueberry@gmail.com", "lynna_xia", "password3", false, new Picture(args[1]),
         countries_Database, interests_Database, loginInfo, userToID, idToAcc);
 
         Account.addInterest(0, "Food", interests_Database, idToAcc);
@@ -462,7 +462,7 @@ public class Debug {
         Account.report(1, "Spam account", idToAcc, suspendedAccs);
         Account.report(0, "They're extremely rude", idToAcc, suspendedAccs);
         System.out.println("Warren has " + Account.reportNum(0, idToAcc) + " reports");
-        System.out.println("Kelvin has " + Account.reportNum(1, idToAcc) + " reports"); 
+        System.out.println("Kelvin has " + Account.reportNum(1, idToAcc) + " reports");
 
     }
 }
