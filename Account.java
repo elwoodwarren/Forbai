@@ -50,11 +50,11 @@ public class Account {
             throw new IllegalArgumentException("Username already taken!");
         }
 
-        // check if username is allowed
+        // check if criteria is allowed
         checkProfanity(u);
-        checkValidity(u);
-
-        // check if above 13 years old
+        checkUserValidity(u);
+        checkEmailValidity(e);
+        checkPasswordLength(p);
         checkAge(a);
 
         Account newUser = new Account(f, l, a, c, e, u, p, g, picture, idToAcc);
@@ -73,20 +73,37 @@ public class Account {
         throw new IllegalArgumentException("Please pick an appropriate username.");
     }
 
+    // throws error if not a valid email
+    private static void checkEmailValidity(String e) {
+
+    }
+
     // throws error if under 13
     private static void checkAge(int a) {
         if (a < 13)
         throw new IllegalArgumentException("Sorry, you must be above 13 years old to make an account.");
     }
 
+    private static void checkPasswordLength(String p) {
+        if (p.length() < 7)
+        throw new IllegalArgumentException("Password must be over 6 characters!");
+    }
+
     // throws error if username contains non-valid characters
-    private static void checkValidity(String m) {
+    private static void checkUserValidity(String m) {
         if (m.contains("~") || m.contains("!") || m.contains("@") || m.contains("#") || m.contains("$") || m.contains("%")
         || m.contains("^") || m.contains("&") || m.contains("*") || m.contains("(") || m.contains(")") || m.contains("-")
         || m.contains("+") || m.contains("=") || m.contains("[") || m.contains("]") || m.contains("{") || m.contains("}")
         || m.contains("?") || m.contains("/") || m.contains(";") || m.contains(":") || m.contains("<") || m.contains(">")
         || m.contains(","))
         throw new IllegalArgumentException("Please pick an appropriate username.");
+
+        if (m.length() >= 16)
+        throw new IllegalArgumentException("Username must be under 16 characters!");
+
+        if (m.length() <= 3)
+        throw new IllegalArgumentException("Username must be at least 4 characters!");
+
     }
 
     // adds group chat to this account
