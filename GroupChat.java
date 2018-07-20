@@ -17,7 +17,7 @@ public class GroupChat {
         private Audio voice;
         private Picture pic;
         private int owner;                          // who sent this message?
-
+        
         public Message(String mes, Audio voice, Picture pic, int owner) {
             this.mes = mes;
             this.voice = voice;

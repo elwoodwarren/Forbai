@@ -12,7 +12,8 @@ public class Account {
     private int age; // user age
     private String[] interests; // all interests associated with a particular acc
     private LinkedList<GroupChat> groupchats; // all group chats associated with a particular acc
-    private LinkedList<IndividualChat> indchats;
+    private LinkedList<IndividualChat> indchats; // all individual chats associated with a particular acc
+    private LinkedList<Integer> embraceRequests; // ids of all accounts that sent embrace requests sent to this user
     private String[] reports; // reasons for the reports against this user
     private int report_Num; // number of reports against this user
     private boolean suspended; // if reports > 5 then suspend acc
@@ -33,6 +34,7 @@ public class Account {
         this.id = idToAcc.size(); // assign unique id to this account
         this.groupchats = new LinkedList<GroupChat>();
         this.indchats = new LinkedList<IndividualChat>();
+        this.embraceRequests = new LinkedList<Integer>();
         this.report_Num = 0;
         this.reports = new String[10];
         this.suspended = false;
@@ -226,39 +228,56 @@ HashMap<Integer, Account> idToAcc) {
 return true;
 }
 
-public static void addEmbracee(int accID0, int accID1, HashMap<Integer, LinkedList<Integer>> idToEmbraceeID, HashMap<Integer, Account> idToAcc) {
+// when user0 sends an embrace request to user1
+public static void sendEmbrace(int accID0, int accID1, HashMap<Integer, Account> idToAcc) {
+    Account user1 = idToAcc.get(accID1);
+    if (!user1.embraceRequests.contains(accID0))
+    user1.embraceRequests.add(accID0);
+}
+
+// when user0 removes/cancels/rejects an embrace request from user1
+public static void removeEmbraceRequest(int accID0, int accID1, HashMap<Integer, Account> idToAcc) {
+    Account user0 = idToAcc.get(accID0);
+    user0.embraceRequests.removeFirstOccurrence(accID1);
+}
+
+// when user0 accepts an embrace request from user1
+public static void acceptEmbrace(int accID0, int accID1, HashMap<Integer, LinkedList<Integer>> idToEmbraceeIDs, HashMap<Integer, Account> idToAcc) {
     Account user0 = idToAcc.get(accID0);
     Account user1 = idToAcc.get(accID1);
 
     if (user0 == null || user1 == null)
     throw new IllegalArgumentException("Null arguments!");
 
+    // update embraceRequests list of accID0
+    removeEmbraceRequest(accID0, accID1, idToAcc);
+
     // if both users have embracees
-    if (idToEmbraceeID.get(user0.id) != null && idToEmbraceeID.get(user1.id) != null) {
-        LinkedList<Integer> user0Embracees = idToEmbraceeID.get(user0.id);
-        LinkedList<Integer> user1Embracees = idToEmbraceeID.get(user1.id);
+    if (idToEmbraceeIDs.get(user0.id) != null && idToEmbraceeIDs.get(user1.id) != null) {
+        LinkedList<Integer> user0Embracees = idToEmbraceeIDs.get(user0.id);
+        LinkedList<Integer> user1Embracees = idToEmbraceeIDs.get(user1.id);
         user0Embracees.add(user1.id);
         user1Embracees.add(user0.id);
-        idToEmbraceeID.put(user0.id, user0Embracees);
-        idToEmbraceeID.put(user1.id, user1Embracees);
+        idToEmbraceeIDs.put(user0.id, user0Embracees);
+        idToEmbraceeIDs.put(user1.id, user1Embracees);
     }
     // if user0 has no embracees and user1 has embracees
-    else if (idToEmbraceeID.get(user0.id) == null && idToEmbraceeID.get(user1.id) != null) {
+    else if (idToEmbraceeIDs.get(user0.id) == null && idToEmbraceeIDs.get(user1.id) != null) {
         LinkedList<Integer> firstEmbracee0 = new LinkedList<Integer>();
         firstEmbracee0.add(user1.id);
-        idToEmbraceeID.put(user0.id, firstEmbracee0);
-        LinkedList<Integer> user1Embracees = idToEmbraceeID.get(user1.id);
+        idToEmbraceeIDs.put(user0.id, firstEmbracee0);
+        LinkedList<Integer> user1Embracees = idToEmbraceeIDs.get(user1.id);
         user1Embracees.add(user0.id);
-        idToEmbraceeID.put(user1.id, user1Embracees);
+        idToEmbraceeIDs.put(user1.id, user1Embracees);
     }
     // if user0 has embracees and user1 has no embracees
-    else if (idToEmbraceeID.get(user1.id) == null && idToEmbraceeID.get(user0.id) != null) {
+    else if (idToEmbraceeIDs.get(user1.id) == null && idToEmbraceeIDs.get(user0.id) != null) {
         LinkedList<Integer> firstEmbracee1 = new LinkedList<Integer>();
         firstEmbracee1.add(user0.id);
-        idToEmbraceeID.put(user1.id, firstEmbracee1);
-        LinkedList<Integer> user0Embracees = idToEmbraceeID.get(user0.id);
+        idToEmbraceeIDs.put(user1.id, firstEmbracee1);
+        LinkedList<Integer> user0Embracees = idToEmbraceeIDs.get(user0.id);
         user0Embracees.add(user1.id);
-        idToEmbraceeID.put(user0.id, user0Embracees);
+        idToEmbraceeIDs.put(user0.id, user0Embracees);
     }
     // if both users have no embracees
     else {
@@ -266,33 +285,38 @@ public static void addEmbracee(int accID0, int accID1, HashMap<Integer, LinkedLi
         LinkedList<Integer> firstEmbracee1 = new LinkedList<Integer>();
         firstEmbracee0.add(user1.id);
         firstEmbracee1.add(user0.id);
-        idToEmbraceeID.put(user0.id, firstEmbracee0);
-        idToEmbraceeID.put(user1.id, firstEmbracee1);
+        idToEmbraceeIDs.put(user0.id, firstEmbracee0);
+        idToEmbraceeIDs.put(user1.id, firstEmbracee1);
     }
 }
 
-public static void removeEmbracee(int accID0, int accID1, HashMap<Integer, LinkedList<Integer>> idToEmbraceeID, HashMap<Integer, Account> idToAcc) {
+public static void removeEmbracee(int accID0, int accID1, HashMap<Integer, LinkedList<Integer>> idToEmbraceeIDs, HashMap<Integer, Account> idToAcc) {
     Account user0 = idToAcc.get(accID0);
     Account user1 = idToAcc.get(accID1);
 
     if (user0 == null || user1 == null)
     throw new IllegalArgumentException("Null arguments!");
 
-    if (idToEmbraceeID.get(user0.id).size() == 0 || idToEmbraceeID.get(user1.id).size() == 0)
+    if (idToEmbraceeIDs.get(user0.id).size() == 0 || idToEmbraceeIDs.get(user1.id).size() == 0)
     throw new IllegalArgumentException("No embracees to remove!");
 
-    LinkedList<Integer> embracees0 = idToEmbraceeID.get(user0.id);
-    LinkedList<Integer> embracees1 = idToEmbraceeID.get(user1.id);
+    LinkedList<Integer> embracees0 = idToEmbraceeIDs.get(user0.id);
+    LinkedList<Integer> embracees1 = idToEmbraceeIDs.get(user1.id);
     embracees0.removeFirstOccurrence(user1.id);
     embracees1.removeFirstOccurrence(user0.id);
-    idToEmbraceeID.put(user0.id, embracees0);
-    idToEmbraceeID.put(user1.id, embracees1);
+    idToEmbraceeIDs.put(user0.id, embracees0);
+    idToEmbraceeIDs.put(user1.id, embracees1);
 }
 
-// show embracees of given user
-public static LinkedList<Integer> showEmbracees(int accID, HashMap<Integer, LinkedList<Integer>> idToEmbraceeID, HashMap<Integer, Account> idToAcc) {
+// returns embracees of given user
+public static LinkedList<Integer> showEmbracees(int accID, HashMap<Integer, LinkedList<Integer>> idToEmbraceeIDs) {
+    return idToEmbraceeIDs.get(accID);
+}
+
+// returns list of account IDs that requested to embrace the given user
+public static LinkedList<Integer> showEmbraceRequests(int accID, HashMap<Integer, Account> idToAcc) {
     Account acc = idToAcc.get(accID);
-    return idToEmbraceeID.get(acc.id);
+    return acc.embraceRequests;
 }
 
 // change email

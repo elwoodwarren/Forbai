@@ -404,58 +404,74 @@ public class Debug {
         }
 
         // TESTS EMBRACING PEOPLE
-        HashMap<Integer, LinkedList<Integer>> idToEmbraceeID = new HashMap<Integer, LinkedList<Integer>>();
+        HashMap<Integer, LinkedList<Integer>> idToEmbraceeIDs = new HashMap<Integer, LinkedList<Integer>>();
 
-        Account.addEmbracee(0, 1, idToEmbraceeID, idToAcc);
+        Account.sendEmbrace(0, 1, idToAcc);
+        Account.acceptEmbrace(1, 0, idToEmbraceeIDs, idToAcc);
         System.out.println("Warren's embracees are: ");
-        for (int accID : Account.showEmbracees(0, idToEmbraceeID, idToAcc))
+        for (int accID : Account.showEmbracees(0, idToEmbraceeIDs))
         System.out.println(accID);                                                                                      // prints all of Warren's embracees (1)
         System.out.println("Kelvin's embracees are: ");
-        for (int accID : Account.showEmbracees(1, idToEmbraceeID, idToAcc))
+        for (int accID : Account.showEmbracees(1, idToEmbraceeIDs))
         System.out.println(accID);                                                                                      // prints all of Kelvin's embracees (0)
 
-
-        Account.addEmbracee(2, 0, idToEmbraceeID, idToAcc);
+        Account.sendEmbrace(2, 0, idToAcc);
+        Account.acceptEmbrace(0, 2, idToEmbraceeIDs, idToAcc);
         System.out.println("Warren's embracees are: ");
-        for (int accID : Account.showEmbracees(0, idToEmbraceeID, idToAcc))
+        for (int accID : Account.showEmbracees(0, idToEmbraceeIDs))
         System.out.println(accID);                                                                                      // prints all of Warren's embracees (1, 2)
         System.out.println("Nick's embracees are ");
-        for (int accID : Account.showEmbracees(2, idToEmbraceeID, idToAcc))
+        for (int accID : Account.showEmbracees(2, idToEmbraceeIDs))
         System.out.println(accID);                                                                                      // prints all of Nick's embracees (0)
 
-        Account.addEmbracee(1, 3, idToEmbraceeID, idToAcc);
+        Account.sendEmbrace(1, 3, idToAcc);
+        Account.sendEmbrace(2, 3, idToAcc);
+        System.out.println("Mom's embracee requests are ");
+        for (int accID: Account.showEmbraceRequests(3, idToAcc))
+        System.out.println(accID);                                                                                      // prints of all Mom's embrace requests (1, 2)
+        Account.removeEmbraceRequest(3, 2, idToAcc);
+        System.out.println("Mom's new embracee requests are ");
+        for (int accID: Account.showEmbraceRequests(3, idToAcc))
+        System.out.println(accID);                                                                                      // prints Mom's new embrace requests (1)
+
+        Account.acceptEmbrace(3, 1, idToEmbraceeIDs, idToAcc);
         System.out.println("Kelvin's embracees are: ");
-        for (int accID : Account.showEmbracees(1, idToEmbraceeID, idToAcc))
+        for (int accID : Account.showEmbracees(1, idToEmbraceeIDs))
         System.out.println(accID);                                                                                      // prints all of Kelvin's embracees (0, 3)
         System.out.println("Mom's embracees are: ");
-        for (int accID : Account.showEmbracees(3, idToEmbraceeID, idToAcc))
+        for (int accID : Account.showEmbracees(3, idToEmbraceeIDs))
         System.out.println(accID);                                                                                      // prints all of Mom's embracees (1)
 
-        Account.addEmbracee(1, 2, idToEmbraceeID, idToAcc);
+        Account.sendEmbrace(2, 1, idToAcc);
+        Account.acceptEmbrace(1, 2, idToEmbraceeIDs, idToAcc);
         System.out.println("Kelvin's embracees are: ");
-        for (int accID : Account.showEmbracees(1, idToEmbraceeID, idToAcc))
+        for (int accID : Account.showEmbracees(1, idToEmbraceeIDs))
         System.out.println(accID);                                                                                      // prints all of Kelvin's embracees (0, 2, 3)
         System.out.println("Nick's embracees are: ");
-        for (int accID : Account.showEmbracees(2, idToEmbraceeID, idToAcc))                                         // prints all of Nick's embracees (0, 1)
+        for (int accID : Account.showEmbracees(2, idToEmbraceeIDs))                                                     // prints all of Nick's embracees (0, 1)
         System.out.println(accID);
 
-        Account.removeEmbracee(0, 1, idToEmbraceeID, idToAcc);
-        Account.removeEmbracee(1, 0, idToEmbraceeID, idToAcc);
-        Account.removeEmbracee(1, 2, idToEmbraceeID, idToAcc);
-        Account.removeEmbracee(3, 1, idToEmbraceeID, idToAcc);
+        Account.removeEmbracee(0, 1, idToEmbraceeIDs, idToAcc);
+        Account.removeEmbracee(1, 0, idToEmbraceeIDs, idToAcc);
+        Account.removeEmbracee(1, 2, idToEmbraceeIDs, idToAcc);
+        Account.removeEmbracee(3, 1, idToEmbraceeIDs, idToAcc);
 
         System.out.println("Warren's embracees are: ");
-        for (int accID : Account.showEmbracees(0, idToEmbraceeID, idToAcc))
+        for (int accID : Account.showEmbracees(0, idToEmbraceeIDs))
         System.out.println(accID);                                                                                      // prints all of Warren's embracees (2)
         System.out.println("Kelvin's embracees are: ");
-        for (int accID : Account.showEmbracees(1, idToEmbraceeID, idToAcc))
+        for (int accID : Account.showEmbracees(1, idToEmbraceeIDs))
         System.out.println(accID);                                                                                      // prints all of Kelvin's embracees (none)
         System.out.println("Nick's embracees are: ");
-        for (int accID : Account.showEmbracees(2, idToEmbraceeID, idToAcc))
+        for (int accID : Account.showEmbracees(2, idToEmbraceeIDs))
         System.out.println(accID);                                                                                      // prints all of Nick's embracees (0)
         System.out.println("Mom's embracees are: ");
-        for (int accID : Account.showEmbracees(3, idToEmbraceeID, idToAcc))
+        for (int accID : Account.showEmbracees(3, idToEmbraceeIDs))
         System.out.println(accID);                                                                                      // prints all of Mom's embracees (none)
+
+        System.out.println("Warren's embrace requests: ");
+        for (int accID: Account.showEmbraceRequests(0, idToAcc))                                                        // (none)
+        System.out.println(accID);
 
         // TEST REPORTING
         Account.report(0, "They're trolling", idToAcc, suspendedAccs);
