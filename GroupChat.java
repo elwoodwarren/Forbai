@@ -17,7 +17,7 @@ public class GroupChat {
         private Audio voice;
         private Picture pic;
         private int owner;                          // who sent this message?
-        
+
         public Message(String mes, Audio voice, Picture pic, int owner) {
             this.mes = mes;
             this.voice = voice;
@@ -83,7 +83,7 @@ private boolean checkProfanity(String m) {
     return false;
 }
 
-// delete chat if all users leave it and update database of group chats
+// delete chat if all users leave it and update database of group chats, or delete chat if admin deletes it
 public static void deleteChat(GroupChat chat, HashMap<String, GroupChat> titleToChat) {
     titleToChat.remove(chat.title);
     chat = null;
