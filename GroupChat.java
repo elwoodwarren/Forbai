@@ -68,19 +68,16 @@ public class GroupChat {
 }
 
 public void addMessage(String m, Audio v, Picture p, int id) {
-    if (checkProfanity(m))
-    throw new IllegalArgumentException("Please help us keep group discussions a healthy place for discussion by not using profane language :)");
+    checkProfanity(m);
     Message newMsg = new Message(m, v, p, id);
     queue.enqueue(newMsg);
 }
 
 // returns true if message contains profanity
-private boolean checkProfanity(String m) {
+private void checkProfanity(String m) {
     if (m.contains("Fuck") || m.contains("fuck") || m.contains("Shit") || m.contains("shit") || m.contains("Bitch") || m.contains("bitch")
     || m.contains("Cunt") || m.contains("cunt") || m.contains("Nigger") || m.contains("nigger") || m.contains("Ass") || m.contains("ass"))
-    return true;
-    else
-    return false;
+    throw new IllegalArgumentException("Please help us keep group discussions a healthy place for discussion by not using profane language :)");
 }
 
 // delete chat if all users leave it and update database of group chats, or delete chat if admin deletes it
