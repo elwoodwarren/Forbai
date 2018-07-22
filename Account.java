@@ -169,11 +169,10 @@ public class Account {
         Account acc = idToAcc.get(accID);
 
         // check if interest is valid
-        if (interest == null || acc == null)
-        return false;
+        checkInterestValidity(interest);
 
         // if interest is not on hashmap, add it
-        else if (interests_Database.get(interest) == null) {
+        if (interests_Database.get(interest) == null) {
             LinkedList<Integer> newAcc = new LinkedList<Integer>();               // update database
             newAcc.add(acc.id);
             interests_Database.put(interest, newAcc);
@@ -199,6 +198,12 @@ public class Account {
     }
     return true;
 }
+}
+
+// if interest is null or over 20 characters
+private static void checkInterestValidity(String i) {
+    if (i == null || i.length() > 20)
+    throw new IllegalArgumentException("Please keep interest to less than twenty characters!");
 }
 
 // remove an interest (returns true if interest exist, false if interest doesn't exist)
