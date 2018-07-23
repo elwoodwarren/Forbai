@@ -44,6 +44,8 @@ public class GroupChat {
 
     // initializes an empty chat
     public GroupChat(int id, String title, HashMap<String, GroupChat> titleToChat, HashMap<Integer, Account> idToAcc) {
+        checkLength(title);
+        checkProfanity(title);
         queue = new Queue<Message>();
         users = new LinkedList<Integer>();
         this.type = type;
@@ -71,6 +73,11 @@ public void addMessage(String m, Audio v, Picture p, int id) {
     checkProfanity(m);
     Message newMsg = new Message(m, v, p, id);
     queue.enqueue(newMsg);
+}
+
+private void checkLength(String t) {
+    if (t.length() > 50)
+    throw new IllegalArgumentException("Please keep titles to under 50 characters!");
 }
 
 // returns true if message contains profanity
