@@ -13,6 +13,7 @@ public class Account {
     private String[] interests; // all interests associated with a particular acc
     private LinkedList<GroupChat> groupchats; // all group chats associated with a particular acc
     private LinkedList<IndividualChat> indchats; // all individual chats associated with a particular acc
+    private int numberOfChats; // number of chats this user has participated in
     private LinkedList<Integer> embraceRequests; // ids of all accounts that sent embrace requests sent to this user
     private String[] reports; // reasons for the reports against this user
     private int report_Num; // number of reports against this user
@@ -30,6 +31,7 @@ public class Account {
         this.gender = gender;
         this.interests = new String[20];
         this.pic = pic;
+        this.numberOfChats = 0;
         this.ambassador = false;
         this.id = idToAcc.size(); // assign unique id to this account
         this.groupchats = new LinkedList<GroupChat>();
@@ -112,6 +114,7 @@ public class Account {
     public static void addGroupChat(int accID, GroupChat newChat, HashMap<Integer, Account> idToAcc) {
         Account acc = idToAcc.get(accID);
         acc.groupchats.addFirst(newChat);
+        acc.numberOfChats++;
     }
 
     // leave group chat
