@@ -359,7 +359,7 @@ public class Debug {
         System.out.print(user + " ");                                                                                   // prints all users in indChat0 (0, 1)
         System.out.println();
         for (Object user : groupChat0.showUsers())
-        System.out.print(user + " ");                                                                                   // prints all users in groupChat0 (0, 3)
+        System.out.print(user + " ");                                                                                   // prints all users in groupChat0 (0, 1, 3)
         System.out.println();
 
         // TEST DISCUSSION SEARCH
@@ -480,5 +480,8 @@ public class Debug {
         System.out.println("Warren has " + Account.reportNum(0, idToAcc) + " reports");
         System.out.println("Kelvin has " + Account.reportNum(1, idToAcc) + " reports");
 
+System.out.println(Account.getNumberOfInterests(1, idToAcc));                                                           // 3
+System.out.println(Account.getNumberOfChats(1, idToAcc));                                                               // 10
+System.out.println(groupChat0.getAdmin());                                                                              // 1
     }
 }

@@ -14,6 +14,7 @@ public class Account {
     private LinkedList<GroupChat> groupchats; // all group chats associated with a particular acc
     private LinkedList<IndividualChat> indchats; // all individual chats associated with a particular acc
     private int numberOfChats; // number of chats this user has participated in
+    private int numberOfInterests; // number of interests this user has added
     private LinkedList<Integer> embraceRequests; // ids of all accounts that sent embrace requests sent to this user
     private String[] reports; // reasons for the reports against this user
     private int report_Num; // number of reports against this user
@@ -135,6 +136,12 @@ public class Account {
         acc.indchats.remove(chat);
     }
 
+    // returns number of chats this user has participated in
+    public static int getNumberOfChats(int accID, HashMap<Integer, Account> idToAcc) {
+        Account acc = idToAcc.get(accID);
+        return acc.numberOfChats;
+    }
+
     // returns all group chats associated with this account
     public static LinkedList<GroupChat> allGroupChats(int accID, HashMap<Integer, Account> idToAcc) {
         Account acc = idToAcc.get(accID);
@@ -165,14 +172,15 @@ public class Account {
         interests_Database.put("All", allAccs);
     }
 
-    // when user adds an interest, add it to hashmap (returns false if interest is null)
-    public static boolean addInterest(int accID, String interest, HashMap<String, LinkedList<Integer>> interests_Database,
+    // when user adds an interest, add it to hashmap
+    public static void addInterest(int accID, String interest, HashMap<String, LinkedList<Integer>> interests_Database,
     HashMap<Integer, Account> idToAcc) {
 
         Account acc = idToAcc.get(accID);
 
         // check if interest is valid
         checkInterestValidity(interest);
+        acc.numberOfInterests++;
 
         // if interest is not on hashmap, add it
         if (interests_Database.get(interest) == null) {
@@ -186,7 +194,6 @@ public class Account {
                 break;
             }
         }
-        return true;
     }
     // otherwise add it to hashmap and update accounts
     else {
@@ -199,7 +206,6 @@ public class Account {
             break;
         }
     }
-    return true;
 }
 }
 
@@ -210,18 +216,17 @@ private static void checkInterestValidity(String i) {
 }
 
 // remove an interest (returns true if interest exist, false if interest doesn't exist)
-public static boolean removeInterest(int accID, String interest, HashMap<String, LinkedList<Integer>> interests_Database,
+public static void removeInterest(int accID, String interest, HashMap<String, LinkedList<Integer>> interests_Database,
 HashMap<Integer, Account> idToAcc) {
 
     // check if interest is valid
     if (interest == null || interests_Database.get(interest) == null)
-    return false;
+    throw new IllegalArgumentException("Invalid Interest!");
 
     Account acc = idToAcc.get(accID);
+    acc.numberOfInterests--;
 
     LinkedList<Integer> interestAccounts = interests_Database.get(interest);
-    if (!interestAccounts.contains(acc.id) || interestAccounts.size() == 0)
-    return false;
 
     interestAccounts.removeFirstOccurrence(acc.id);                             // update database
     interests_Database.put(interest, interestAccounts);
@@ -233,7 +238,12 @@ HashMap<Integer, Account> idToAcc) {
         break;
     }
 }
-return true;
+}
+
+// returns number of interests this user has uploaded
+public static int getNumberOfInterests(int accID, HashMap<Integer, Account> idToAcc) {
+    Account acc = idToAcc.get(accID);
+    return acc.numberOfInterests;
 }
 
 // when user0 sends an embrace request to user1

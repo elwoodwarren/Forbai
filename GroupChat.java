@@ -106,11 +106,16 @@ public Queue<Message> history() {
     return queue;
 }
 
+// returns the account ID of the admin of the chat
+public int getAdmin() {
+    return this.admin;
+}
+
+// adds user to group chat
 public void addUser(int id, HashMap<Integer, Account> idToAcc) {
     if (isFull())
     throw new IllegalArgumentException("Chat is full!");
-    users.add(id);
-    Account.addGroupChat(id, this, idToAcc);
+    this.users.add(id);
 }
 
 // leave chat
