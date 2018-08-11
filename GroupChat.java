@@ -55,30 +55,43 @@ public class GroupChat {
     }
 
     // initializes an empty chat
-    public GroupChat(int id, String title, HashMap<String, GroupChat> titleToChat, HashMap<Integer, Account> idToAcc) {
+    public GroupChat(int id, String title, HashMap<String, GroupChat> titleToChat, HashMap<Integer, Account> idToAcc,
+    LinkedList<GroupChat> normalGCs, LinkedList<GroupChat> ambassadorGCs) {
         checkLength(title);
         checkProfanity(title);
-        queue = new Queue<Message>();
-        users = new LinkedList<Integer>();
+        if (titleToChat.containsKey(title) && !titleToChat.get(title).isFull()) {
+            Account.addGroupChat(id, titleToChat.get(title), idToAcc);         // if the exact same question exists & chat is not full, add the user to the existing chat
+        }
+
+        this.queue = new Queue<Message>();
+        this.users = new LinkedList<Integer>();
         this.type = type;
         this.title = title;
         this.admin = id;
         this.report_Num = 0;
         addUser(id, idToAcc);                                                          // add creator of chat to list of chat users
-
-        if (titleToChat.containsKey(title) && !titleToChat.get(title).isFull()) {
-            Account.addGroupChat(id, titleToChat.get(title), idToAcc);         // if the exact same question exists & chat is not full, add the user to the existing chat
-        }
-        else if (titleToChat.containsKey(title) && titleToChat.get(title).isFull()) {
-            this.title = title + " ";
-            titleToChat.put(this.title, this);                   // if exact same question exists & other chat is full, create a modified title
-            Account.addGroupChat(id, this, idToAcc);
-        }
-        else {                                                 // if question doesn't exist, add it to hashmap with no changes
-        titleToChat.put(title, this);
-        Account.addGroupChat(id, this, idToAcc);
+        updateChats(id, title, titleToChat, idToAcc, normalGCs, ambassadorGCs);
     }
 
+    private void updateChats(int id, String title, HashMap<String, GroupChat> titleToChat, HashMap<Integer, Account> idToAcc,
+    LinkedList<GroupChat> normalGCs, LinkedList<GroupChat> ambassadorGCs) {
+
+        if (titleToChat.containsKey(title) && titleToChat.get(title).isFull()) {   // if exact same question exists & other chat is full, create chat w/ a modified title
+            this.title = title + " ";
+            titleToChat.put(this.title, this);
+            Account.addGroupChat(id, this, idToAcc);
+            normalGCs.addFirst(this);
+            if (Account.checkAmbassador(id, idToAcc))                        // add to ambassador chat if applicable
+            ambassadorGCs.addFirst(this);
+        }
+
+        else {                                                 // if question doesn't exist, add it to hashmap and lists with no changes
+        titleToChat.put(title, this);
+        Account.addGroupChat(id, this, idToAcc);
+        normalGCs.addFirst(this);
+        if (Account.checkAmbassador(id, idToAcc))                        // add to ambassador chat if applicable
+        ambassadorGCs.addFirst(this);
+    }
 }
 
 public void addMessage(String m, Audio v, Picture p, int id, HashMap<Integer, Account> idToAcc) {
@@ -91,7 +104,7 @@ public void addMessage(String m, Audio v, Picture p, int id, HashMap<Integer, Ac
 // checks if the user is suspended (i.e. if they have 5+ reports). if yes, set report count to 0 and ban them from sending messages for a day. <- how to do this?
 private void checkSuspended(int id, HashMap<Integer, Account> idToAcc) {
     if (Account.reportNum(id, idToAcc) >= 5)
-        throw new IllegalArgumentException("5+ users have reported you for misconduct. Please wait one day before sending more messages.");
+    throw new IllegalArgumentException("5+ users have reported you for misconduct. Please wait one day before sending more messages.");
 }
 
 private void checkLength(String t) {
@@ -126,7 +139,7 @@ public Queue<Message> history() {
 }
 
 // returns the account ID of the admin of the chat
-public int getAdmin() {
+public int showAdmin() {
     return this.admin;
 }
 

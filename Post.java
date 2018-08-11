@@ -62,21 +62,6 @@ public class Post {
         }
     }
 
-    // add post to linkedlist of posts by a given user's embracees
-    private void updatePosts(int id, HashMap<Integer, LinkedList<Post>> idToPosts) {
-        // if user has never posted
-        if (!idToPosts.containsKey(id)) {
-            LinkedList<Post> posts = new LinkedList<Post>();
-            posts.add(this);
-            idToPosts.put(id, posts);
-        }
-        // if user has posted before
-        else {
-            LinkedList<Post> posts = idToPosts.get(id);
-            posts.add(this);
-        }
-    }
-
     // returns visual representation of the post
     public Object toVisual() {
         if (this.mes != null)

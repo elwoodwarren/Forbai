@@ -12,6 +12,8 @@ public class Debug {
         HashMap<Integer, LinkedList<Integer>> idToEmbraceeIDs = new HashMap<Integer, LinkedList<Integer>>();            // maps a user's ID to their embracees' IDs
         HashMap<String, GroupChat> titleToChat = new HashMap<String, GroupChat>();                                      // maps chat titles to the corresponding Groupchat objects
         HashMap<Integer, LinkedList<Post>> idToPosts = new HashMap<Integer, LinkedList<Post>>();                        // maps a user's ID to their embracees' Sonder posts
+        LinkedList<GroupChat> normalGCs = new LinkedList<GroupChat>();                                                  // list of group chats uploaded by normal users
+        LinkedList<GroupChat> ambassadorGCs = new LinkedList<GroupChat>();                                              // list of ambassador group chats
 
         countries_Database.put("All", new LinkedList<Integer>());
         countries_Database.put("Afghanistan", new LinkedList<Integer>());
@@ -302,6 +304,7 @@ public class Debug {
         Account.changeUsername(1, "labron", userToID, idToAcc);
         Account.changePassword(3, "nickthefrick", loginInfo, idToAcc);
         Account.changeEmail(0, "weee@uo.com", loginInfo, idToAcc);
+        Account.makeAmbassador(1, idToAcc);
 
         System.out.println("Kelvin's username is: " + Account.showUser(1, idToAcc));                                // labron
         System.out.println("Nick's password is: " + Account.showPass(2, idToAcc));                                  // nickthefrick
@@ -325,7 +328,7 @@ public class Debug {
             System.out.println(m.toVisual());                                                                          // prints all messages in indChat0
         }
 
-        GroupChat groupChat0 = new GroupChat(1, "Is Trump a good president?", titleToChat, idToAcc);
+        GroupChat groupChat0 = new GroupChat(1, "Is Trump a good president?", titleToChat, idToAcc, normalGCs, ambassadorGCs);
         groupChat0.addUser(0, idToAcc);
         groupChat0.addUser(2, idToAcc);
         groupChat0.addUser(3, idToAcc);
@@ -363,15 +366,15 @@ public class Debug {
         System.out.println();
 
         // TEST DISCUSSION SEARCH
-        GroupChat groupChat1 = new GroupChat(1, "I love Donald Trump.", titleToChat, idToAcc);
-        GroupChat groupChat2 = new GroupChat(1, "I hate Donald Trump!", titleToChat, idToAcc);
-        GroupChat groupChat3 = new GroupChat(1, "What are some good things Trump has done?", titleToChat, idToAcc);
-        GroupChat groupChat4 = new GroupChat(1, "I love Kendrick", titleToChat, idToAcc);
-        GroupChat groupChat5 = new GroupChat(1, "I love nice people.", titleToChat, idToAcc);
-        GroupChat groupChat6 = new GroupChat(1, "Is Trump a bad president?", titleToChat, idToAcc);
-        GroupChat groupChat7 = new GroupChat(1, "I love food.", titleToChat, idToAcc);
-        GroupChat groupChat8 = new GroupChat(1, "Private equity is fun.", titleToChat, idToAcc);
-        GroupChat groupChat9 = new GroupChat(1, "Venture capital is fun.", titleToChat, idToAcc);
+        GroupChat groupChat1 = new GroupChat(1, "I love Barack Obama.", titleToChat, idToAcc, normalGCs, ambassadorGCs);
+        GroupChat groupChat2 = new GroupChat(2, "I hate Donald Trump!", titleToChat, idToAcc, normalGCs, ambassadorGCs);
+        GroupChat groupChat3 = new GroupChat(1, "What are some good things Trump has done?", titleToChat, idToAcc, normalGCs, ambassadorGCs);
+        GroupChat groupChat4 = new GroupChat(0, "I love Kendrick", titleToChat, idToAcc, normalGCs, ambassadorGCs);
+        GroupChat groupChat5 = new GroupChat(1, "I love nice people.", titleToChat, idToAcc, normalGCs, ambassadorGCs);
+        GroupChat groupChat6 = new GroupChat(2, "Is Trump a bad president?", titleToChat, idToAcc, normalGCs, ambassadorGCs);
+        GroupChat groupChat7 = new GroupChat(3, "I love food.", titleToChat, idToAcc, normalGCs, ambassadorGCs);
+        GroupChat groupChat8 = new GroupChat(1, "Private equity is fun.", titleToChat, idToAcc, normalGCs, ambassadorGCs);
+        GroupChat groupChat9 = new GroupChat(0, "Venture capital is fun.", titleToChat, idToAcc, normalGCs, ambassadorGCs);
         GroupChat.deleteChat(groupChat5, titleToChat);
         groupChat1.removeUser(1, idToAcc, titleToChat);
 
@@ -481,7 +484,7 @@ public class Debug {
         // tests misc methods that I added
         System.out.println(Account.getNumberOfInterests(1, idToAcc));                                                   // 3
         System.out.println(Account.getNumberOfChats(1, idToAcc));                                                       // 10
-        System.out.println(groupChat0.getAdmin());                                                                      // 1
+        System.out.println(groupChat0.showAdmin());                                                                      // 1
 
         // TEST POST.java
         Post warrenUpdate0 = new Post("My dogs hate my cats.", null, null, 0, null, idToPosts, idToEmbraceeIDs);
@@ -508,5 +511,12 @@ public class Debug {
         for (Post post : Account.showEmbraceePosts(1, idToPosts)) {
             System.out.println(post.toVisual());
         }
+
+        // TESTS SHOWING LIST OF AMBASSADOR AND PUBLIC CHATS
+        for (GroupChat gc: normalGCs)
+        System.out.println("Title: " + gc.showTitle());
+
+        for (GroupChat gc: ambassadorGCs)
+        System.out.println("Ambassador Title: " + gc.showTitle());
     }
 }

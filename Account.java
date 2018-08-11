@@ -403,6 +403,12 @@ public static void makeAmbassador(int accID, HashMap<Integer, Account> idToAcc) 
     acc.ambassador = true;
 }
 
+// is the user an ambassador?
+public static boolean checkAmbassador(int accID, HashMap<Integer, Account> idToAcc) {
+    Account acc = idToAcc.get(accID);
+    return acc.ambassador;
+}
+
 // edit profile picture
 public static void editProfPic(int accID, File file, HashMap<Integer, Account> idToAcc) {
     Account acc = idToAcc.get(accID);
