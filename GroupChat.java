@@ -16,11 +16,13 @@ public class GroupChat {
         private String mes;
         private Audio voice;
         private Picture pic;
-        private int owner;                          // who sent this message?
+        private int likes;                      // number of likes of this message
+        private int owner;                      // who sent this message?
 
         public Message(String mes, Audio voice, Picture pic, int owner) {
             this.mes = mes;
             this.voice = voice;
+            this.likes = 0;
             this.pic = pic;
             this.owner = owner;
         }
@@ -38,6 +40,16 @@ public class GroupChat {
         // does this message belong to this user?
         public boolean whoseMessage(int accID) {
             return accID == this.owner;
+        }
+
+        // adds like to a message
+        public void addLike() {
+            this.likes++;
+        }
+
+        // returns number of likes on this message
+        public int getLikes() {
+            return this.likes;
         }
 
     }
@@ -69,10 +81,17 @@ public class GroupChat {
 
 }
 
-public void addMessage(String m, Audio v, Picture p, int id) {
+public void addMessage(String m, Audio v, Picture p, int id, HashMap<Integer, Account> idToAcc) {
     checkProfanity(m);
+    checkSuspended(id, idToAcc);
     Message newMsg = new Message(m, v, p, id);
     queue.enqueue(newMsg);
+}
+
+// checks if the user is suspended (i.e. if they have 5+ reports). if yes, set report count to 0 and ban them from sending messages for a day. <- how to do this?
+private void checkSuspended(int id, HashMap<Integer, Account> idToAcc) {
+    if (Account.reportNum(id, idToAcc) >= 5)
+        throw new IllegalArgumentException("5+ users have reported you for misconduct. Please wait one day before sending more messages.");
 }
 
 private void checkLength(String t) {

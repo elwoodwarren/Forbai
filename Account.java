@@ -210,9 +210,14 @@ public class Account {
 }
 
 // if interest is null or over 20 characters
-private static void checkInterestValidity(String i) {
-    if (i == null || i.length() > 20)
+private static void checkInterestValidity(String m) {
+    if (m == null || m.length() > 20)
     throw new IllegalArgumentException("Please keep interest to less than twenty characters!");
+
+    if (m.contains("Fuck") || m.contains("fuck") || m.contains("Shit") || m.contains("shit") || m.contains("Bitch") || m.contains("bitch")
+    || m.contains("Cunt") || m.contains("cunt") || m.contains("Nigger") || m.contains("nigger") || m.contains("Ass") || m.contains("ass")
+    || m.contains("Dick") || m.contains("dick") || m.contains("Vagina") || m.contains("vagina") || m.contains("Nigga") || m.contains("nigga"))
+    throw new IllegalArgumentException("Please pick an appropriate interest.");
 }
 
 // remove an interest (returns true if interest exist, false if interest doesn't exist)
@@ -431,7 +436,7 @@ public static String toInterestString(String interest, HashMap<String, LinkedLis
 }
 
 // call this method when a user is reported. If a user's total # of reports reached 5, it gets suspended
-public static void report(int accID, String reason, HashMap<Integer, Account> idToAcc, Queue<Integer> suspendedAccs) {
+public static void report(int accID, String reason, HashMap<Integer, Account> idToAcc) {
     Account acc = idToAcc.get(accID);
     acc.report_Num++;
     for (int i = 0; i < acc.reports.length; i++) {
@@ -439,10 +444,8 @@ public static void report(int accID, String reason, HashMap<Integer, Account> id
         acc.reports[i] = reason;
     }
 
-    if (acc.report_Num >= 5) {
-        acc.suspended = true;
-        suspendedAccs.enqueue(accID);
-    }
+    if (acc.report_Num >= 5)
+    acc.suspended = true;
 }
 
 public static String[] showReportReasons(int accID, HashMap<Integer, Account> idToAcc) {
@@ -450,10 +453,15 @@ public static String[] showReportReasons(int accID, HashMap<Integer, Account> id
     return acc.reports;
 }
 
-// if an account has 3+ reports against them, they should be banned from sending messages for a day
+// if an account has 5+ reports against them, they should be banned from sending messages for a day
 public static int reportNum(int accID, HashMap<Integer, Account> idToAcc) {
     Account acc = idToAcc.get(accID);
     return acc.report_Num;
+}
+
+// shows all Sonder posts of your embracees in chronological order
+public static LinkedList<Post> showEmbraceePosts(int accID, HashMap<Integer, LinkedList<Post>> idToPosts) {
+    return idToPosts.get(accID);
 }
 
 }

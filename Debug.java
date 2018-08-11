@@ -4,12 +4,14 @@ import java.util.LinkedList;
 
 public class Debug {
     public static void main(String[] args) {
-        HashMap<String, LinkedList<Integer>> countries_Database = new HashMap<String, LinkedList<Integer>>();
-        HashMap<String, LinkedList<Integer>> interests_Database = new HashMap<String, LinkedList<Integer>>();
-        HashMap<String, String> loginInfo = new HashMap<String, String>();
-        HashMap<String, Integer> userToID = new HashMap<String, Integer>();
-        HashMap<Integer, Account> idToAcc = new HashMap<Integer, Account>();
-        Queue<Integer> suspendedAccs = new Queue<Integer>();                                                            // database of suspended accounts
+        HashMap<String, LinkedList<Integer>> countries_Database = new HashMap<String, LinkedList<Integer>>();           // maps a country to all account IDs in that country
+        HashMap<String, LinkedList<Integer>> interests_Database = new HashMap<String, LinkedList<Integer>>();           // maps an interest to all the account IDs with that interest
+        HashMap<String, String> loginInfo = new HashMap<String, String>();                                              // maps a user's email to their password
+        HashMap<String, Integer> userToID = new HashMap<String, Integer>();                                             // maps a user's username to their ID
+        HashMap<Integer, Account> idToAcc = new HashMap<Integer, Account>();                                            // maps a user's ID to the corresponding Account object
+        HashMap<Integer, LinkedList<Integer>> idToEmbraceeIDs = new HashMap<Integer, LinkedList<Integer>>();            // maps a user's ID to their embracees' IDs
+        HashMap<String, GroupChat> titleToChat = new HashMap<String, GroupChat>();                                      // maps chat titles to the corresponding Groupchat objects
+        HashMap<Integer, LinkedList<Post>> idToPosts = new HashMap<Integer, LinkedList<Post>>();                        // maps a user's ID to their embracees' Sonder posts
 
         countries_Database.put("All", new LinkedList<Integer>());
         countries_Database.put("Afghanistan", new LinkedList<Integer>());
@@ -309,8 +311,6 @@ public class Debug {
         System.out.println("Nick's interests: " + Arrays.toString(Account.interestList(2, idToAcc)));               // tests if interest is inserted at correct spot
 
         // TESTS CHATS/MESSAGES
-        HashMap<String, GroupChat> titleToChat = new HashMap<String, GroupChat>();
-
         IndividualChat indChat0 = new IndividualChat(0, 1, idToAcc);
 
         indChat0.addMessage("Hey", null, null, 0);
@@ -331,12 +331,12 @@ public class Debug {
         groupChat0.addUser(3, idToAcc);
         groupChat0.removeUser(2, idToAcc, titleToChat);
 
-        groupChat0.addMessage("Do y'all like Donald Trump?", null, null, 0);
-        groupChat0.addMessage("What's wrong with him?", null, null, 1);
-        groupChat0.addMessage("He's a clown?", null, null, 2);
-        groupChat0.addMessage("You cray", null, null, 3);
-        groupChat0.addMessage("Yeah I like him", null, null, 0);
-        groupChat0.addMessage("Homie are you dumb", null, null, 3);
+        groupChat0.addMessage("Do y'all like Donald Trump?", null, null, 0, idToAcc);
+        groupChat0.addMessage("What's wrong with him?", null, null, 1, idToAcc);
+        groupChat0.addMessage("He's a clown?", null, null, 2, idToAcc);
+        groupChat0.addMessage("You cray", null, null, 3, idToAcc);
+        groupChat0.addMessage("Yeah I like him", null, null, 0, idToAcc);
+        groupChat0.addMessage("Homie are you dumb", null, null, 3, idToAcc);
 
         Queue<GroupChat.Message> chatHis1 = groupChat0.history();
         for (GroupChat.Message m : chatHis1) {
@@ -404,8 +404,6 @@ public class Debug {
         }
 
         // TESTS EMBRACING PEOPLE
-        HashMap<Integer, LinkedList<Integer>> idToEmbraceeIDs = new HashMap<Integer, LinkedList<Integer>>();
-
         Account.sendEmbrace(0, 1, idToAcc);
         Account.acceptEmbrace(1, 0, idToEmbraceeIDs, idToAcc);
         System.out.println("Warren's embracees are: ");
@@ -451,10 +449,10 @@ public class Debug {
         for (int accID : Account.showEmbracees(2, idToEmbraceeIDs))                                                     // prints all of Nick's embracees (0, 1)
         System.out.println(accID);
 
-        Account.removeEmbracee(0, 1, idToEmbraceeIDs, idToAcc);
+        /*        Account.removeEmbracee(0, 1, idToEmbraceeIDs, idToAcc);
         Account.removeEmbracee(1, 0, idToEmbraceeIDs, idToAcc);
         Account.removeEmbracee(1, 2, idToEmbraceeIDs, idToAcc);
-        Account.removeEmbracee(3, 1, idToEmbraceeIDs, idToAcc);
+        Account.removeEmbracee(3, 1, idToEmbraceeIDs, idToAcc); */
 
         System.out.println("Warren's embracees are: ");
         for (int accID : Account.showEmbracees(0, idToEmbraceeIDs))
@@ -474,14 +472,41 @@ public class Debug {
         System.out.println(accID);
 
         // TEST REPORTING
-        Account.report(0, "They're trolling", idToAcc, suspendedAccs);
-        Account.report(1, "Spam account", idToAcc, suspendedAccs);
-        Account.report(0, "They're extremely rude", idToAcc, suspendedAccs);
+        Account.report(0, "They're trolling", idToAcc);
+        Account.report(1, "Spam account", idToAcc);
+        Account.report(0, "They're extremely rude", idToAcc);
         System.out.println("Warren has " + Account.reportNum(0, idToAcc) + " reports");
         System.out.println("Kelvin has " + Account.reportNum(1, idToAcc) + " reports");
 
-System.out.println(Account.getNumberOfInterests(1, idToAcc));                                                           // 3
-System.out.println(Account.getNumberOfChats(1, idToAcc));                                                               // 10
-System.out.println(groupChat0.getAdmin());                                                                              // 1
+        // tests misc methods that I added
+        System.out.println(Account.getNumberOfInterests(1, idToAcc));                                                   // 3
+        System.out.println(Account.getNumberOfChats(1, idToAcc));                                                       // 10
+        System.out.println(groupChat0.getAdmin());                                                                      // 1
+
+        // TEST POST.java
+        Post warrenUpdate0 = new Post("My dogs hate my cats.", null, null, 0, null, idToPosts, idToEmbraceeIDs);
+        Post kelvinUpdate0 = new Post("I like girls.", null, null, 1, null, idToPosts, idToEmbraceeIDs);
+        Post nickUpdate0 = new Post("I am good at tennis.", null, null, 2, null, idToPosts, idToEmbraceeIDs);
+        Post momUpdate0 = new Post("I like to cook Chinese food.", null, null, 3, null, idToPosts, idToEmbraceeIDs);
+        Post warrenUpdate1 = new Post("I work hard.", null, null, 0, null, idToPosts, idToEmbraceeIDs);
+        Post warrenUpdate2 = new Post("WeSpeak will succeed.", null, null, 0, null, idToPosts, idToEmbraceeIDs);
+        Post warrenUpdate3 = new Post("Billion dollar company.", null, null, 0, null, idToPosts, idToEmbraceeIDs);
+
+        warrenUpdate0.addComment(1, "Damn daniel");
+        warrenUpdate0.addComment(2, "Cats love dogs");
+        warrenUpdate0.addComment(1, "Zam zaddy");
+
+        for (Post.Comment c : warrenUpdate0.getComments())
+        System.out.println(c.toString());                                                                               // prints the above comments
+
+        System.out.println("Warren's embracees' posts:");
+        for (Post post : Account.showEmbraceePosts(0, idToPosts)) {
+            System.out.println(post.toVisual());                                                                        // prints warren's embracees' posts
+        }
+
+        System.out.println("Kelvin's embracees' posts:");
+        for (Post post : Account.showEmbraceePosts(1, idToPosts)) {
+            System.out.println(post.toVisual());
+        }
     }
 }
