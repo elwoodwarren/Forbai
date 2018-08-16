@@ -2,6 +2,7 @@ import java.util.HashMap;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.io.File;
+import java.lang.StringBuilder;
 
 public class Account {
 
@@ -173,13 +174,14 @@ public class Account {
     }
 
     // when user adds an interest, add it to hashmap
-    public static void addInterest(int accID, String interest, HashMap<String, LinkedList<Integer>> interests_Database,
+    public static void addInterest(int accID, String i, HashMap<String, LinkedList<Integer>> interests_Database,
     HashMap<Integer, Account> idToAcc) {
 
         Account acc = idToAcc.get(accID);
 
         // check if interest is valid
-        checkInterestValidity(interest);
+        checkInterestValidity(i);
+        String interest = fixInterestString(i);
         acc.numberOfInterests++;
 
         // if interest is not on hashmap, add it
@@ -188,9 +190,9 @@ public class Account {
             newAcc.add(acc.id);
             interests_Database.put(interest, newAcc);
 
-            for (int i = 0; i < acc.interests.length; i++) {                            // update account's interests
-            if (acc.interests[i] == null) {
-                acc.interests[i] = interest;
+            for (int j = 0; j < acc.interests.length; j++) {                            // update account's interests
+            if (acc.interests[j] == null) {
+                acc.interests[j] = interest;
                 break;
             }
         }
@@ -200,13 +202,22 @@ public class Account {
         LinkedList<Integer> interestAccount = interests_Database.get(interest); // update database
         interestAccount.add(acc.id);
         interests_Database.put(interest, interestAccount);
-        for (int i = 0; i < acc.interests.length; i++) {                            // update account's interests
-        if (acc.interests[i] == null) {
-            acc.interests[i] = interest;
+        for (int j = 0; j < acc.interests.length; j++) {                            // update account's interests
+        if (acc.interests[j] == null) {
+            acc.interests[j] = interest;
             break;
         }
     }
 }
+}
+
+// deletes "The" if user puts "The" as the first word in the interest
+private static String fixInterestString(String i) {
+    StringBuilder interest = new StringBuilder(i);
+    String test = interest.substring(0, 3);
+    if (test.equals("The"))
+    interest.delete(0, 4);
+    return interest.toString();
 }
 
 // if interest is null or over 20 characters
