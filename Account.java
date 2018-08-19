@@ -222,8 +222,8 @@ private static String fixInterestString(String i) {
 
 // if interest is null or over 20 characters
 private static void checkInterestValidity(String m) {
-    if (m == null || m.length() > 20)
-    throw new IllegalArgumentException("Please keep interest to less than 20 characters!");
+    if (m == null || m.length() > 25)
+    throw new IllegalArgumentException("Please keep interest to less than 25 characters!");
 
     if (m.contains("Fuck") || m.contains("fuck") || m.contains("Shit") || m.contains("shit") || m.contains("Bitch") || m.contains("bitch")
     || m.contains("Cunt") || m.contains("cunt") || m.contains("Nigger") || m.contains("nigger") || m.contains("Ass") || m.contains("ass")
