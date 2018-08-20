@@ -48,18 +48,13 @@ public class Account {
     public static void create(String f, String l, int a, String c, String e, String u, String p, boolean g, Picture picture,
     HashMap<String, LinkedList<Integer>> countries_Database, HashMap<String, LinkedList<Integer>> interests_Database,
     HashMap<String, String> loginInfo, HashMap<String, Integer> userToID, HashMap<Integer, Account> idToAcc) {
-        // check if username and email are available
-        if (!loginInfo.isEmpty()) {
-            if (loginInfo.containsKey(e))
-            throw new IllegalArgumentException("Email already taken!");
-            if (userToID.containsKey(u))
-            throw new IllegalArgumentException("Username already taken!");
-        }
 
-        // check if criteria is allowed
+        // check if arguments are allowed
+        checkProfanity(f);
+        checkProfanity(l);
         checkProfanity(u);
-        checkUserValidity(u);
-        checkEmailValidity(e);
+        checkUserValidity(u, userToID);
+        checkEmailValidity(e, loginInfo);
         checkPasswordLength(p);
         checkAge(a);
 
@@ -80,8 +75,12 @@ public class Account {
     }
 
     // throws error if not a valid email
-    private static void checkEmailValidity(String e) {
-
+    private static void checkEmailValidity(String e, HashMap<String, String> loginInfo) {
+        // check if username and email are available
+        if (!loginInfo.isEmpty()) {
+            if (loginInfo.containsKey(e))
+            throw new IllegalArgumentException("Email already taken!");
+        }
     }
 
     // throws error if under 13
@@ -96,7 +95,7 @@ public class Account {
     }
 
     // throws error if username contains non-valid characters
-    private static void checkUserValidity(String m) {
+    private static void checkUserValidity(String m, HashMap<String, Integer> userToID) {
         if (m.contains("~") || m.contains("!") || m.contains("@") || m.contains("#") || m.contains("$") || m.contains("%")
         || m.contains("^") || m.contains("&") || m.contains("*") || m.contains("(") || m.contains(")") || m.contains("-")
         || m.contains("+") || m.contains("=") || m.contains("[") || m.contains("]") || m.contains("{") || m.contains("}")
@@ -109,6 +108,9 @@ public class Account {
 
         if (m.length() <= 3)
         throw new IllegalArgumentException("Username must be at least 4 characters!");
+
+        if (userToID.get(m) != null)
+        throw new IllegalArgumentException("Username is taken!");
 
     }
 
