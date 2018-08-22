@@ -3,14 +3,16 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.io.File;
 import java.lang.StringBuilder;
+import java.security.MessageDigest;
 
 public class Account {
 
     private Picture pic; // profile pic
-    private String first, last, country, email, username, password;
+    private String first, last, country, email, username;
     private boolean gender, ambassador; // true is M, false is F for gender
     private int id; // user id
     private int age; // user age
+    private int password; // hashed-int value of password
     private String[] interests; // all interests associated with a particular acc
     private LinkedList<GroupChat> groupchats; // all group chats associated with a particular acc
     private LinkedList<IndividualChat> indchats; // all individual chats associated with a particular acc
@@ -22,7 +24,7 @@ public class Account {
     private boolean suspended; // if reports > 5 then suspend acc
 
     // constructor
-    public Account(String first, String last, int age, String country, String email, String username, String password,
+    public Account(String first, String last, int age, String country, String email, String username, int password,
     boolean gender, Picture pic, HashMap<Integer, Account> idToAcc) {
         this.first = first;
         this.last = last;
@@ -47,7 +49,7 @@ public class Account {
     // creates new account
     public static void create(String f, String l, int a, String c, String e, String u, String p, boolean g, Picture picture,
     HashMap<String, LinkedList<Integer>> countries_Database, HashMap<String, LinkedList<Integer>> interests_Database,
-    HashMap<String, String> loginInfo, HashMap<String, Integer> userToID, HashMap<Integer, Account> idToAcc) {
+    HashMap<String, Integer> loginInfo, HashMap<String, Integer> userToID, HashMap<Integer, Account> idToAcc) {
 
         // check if arguments are allowed
         checkProfanity(f);
@@ -57,8 +59,9 @@ public class Account {
         checkEmailValidity(e, loginInfo);
         checkPasswordLength(p);
         checkAge(a);
+        int pass = encrypt(p);
 
-        Account newUser = new Account(f, l, a, c, e, u, p, g, picture, idToAcc);
+        Account newUser = new Account(f, l, a, c, e, u, pass, g, picture, idToAcc);
         idToAcc.put(newUser.id, newUser);
         loginInfo.put(newUser.email, newUser.password);
         userToID.put(newUser.username, newUser.id);
@@ -75,7 +78,7 @@ public class Account {
     }
 
     // throws error if not a valid email
-    private static void checkEmailValidity(String e, HashMap<String, String> loginInfo) {
+    private static void checkEmailValidity(String e, HashMap<String, Integer> loginInfo) {
         // check if username and email are available
         if (!loginInfo.isEmpty()) {
             if (loginInfo.containsKey(e))
@@ -92,6 +95,15 @@ public class Account {
     private static void checkPasswordLength(String p) {
         if (p.length() < 7)
         throw new IllegalArgumentException("Password must be over 6 characters!");
+    }
+
+    // hashes the password
+    private static int encrypt(String p) {
+        int hash = 7;
+        for (int i = 0; i < p.length(); i++) {
+            hash = hash*31 + p.charAt(i);
+        }
+        return hash;
     }
 
     // throws error if username contains non-valid characters
@@ -356,7 +368,7 @@ public static LinkedList<Integer> showEmbraceRequests(int accID, HashMap<Integer
 }
 
 // change email
-public static void changeEmail(int accID, String newEmail, HashMap<String, String> loginInfo, HashMap<Integer, Account> idToAcc) {
+public static void changeEmail(int accID, String newEmail, HashMap<String, Integer> loginInfo, HashMap<Integer, Account> idToAcc) {
     Account acc = idToAcc.get(accID);
     loginInfo.remove(acc.email);
     acc.email = newEmail;
@@ -374,10 +386,10 @@ public static void changeUsername(int accID, String newUser, HashMap<String, Int
 }
 
 // change password
-public static void changePassword(int accID, String newPass, HashMap<String, String> loginInfo, HashMap<Integer, Account> idToAcc) {
+public static void changePassword(int accID, String newPass, HashMap<String, Integer> loginInfo, HashMap<Integer, Account> idToAcc) {
     Account acc = idToAcc.get(accID);
-    acc.password = newPass;
-    loginInfo.put(acc.email, newPass);
+    acc.password = encrypt(newPass);
+    loginInfo.put(acc.email, acc.password);
     idToAcc.put(acc.id, acc);
 }
 
@@ -396,7 +408,7 @@ public static String showLastName(int accID, HashMap<Integer, Account> idToAcc) 
     return acc.last;
 }
 
-public static String showPass(int accID, HashMap<Integer, Account> idToAcc) {
+public static int showPass(int accID, HashMap<Integer, Account> idToAcc) {
     Account acc = idToAcc.get(accID);
     return acc.password;
 }
