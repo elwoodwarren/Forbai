@@ -59,7 +59,7 @@ public class Account {
         checkEmailValidity(e, loginInfo);
         checkPasswordLength(p);
         checkAge(a);
-        int pass = encrypt(p);
+        int pass = Encrypt.encrypt(p);
 
         Account newUser = new Account(f, l, a, c, e, u, pass, g, picture, idToAcc);
         idToAcc.put(newUser.id, newUser);
@@ -95,15 +95,6 @@ public class Account {
     private static void checkPasswordLength(String p) {
         if (p.length() < 7)
         throw new IllegalArgumentException("Password must be over 6 characters!");
-    }
-
-    // hashes the password
-    private static int encrypt(String p) {
-        int hash = 7;
-        for (int i = 0; i < p.length(); i++) {
-            hash = hash*31 + p.charAt(i);
-        }
-        return hash;
     }
 
     // throws error if username contains non-valid characters
@@ -388,7 +379,7 @@ public static void changeUsername(int accID, String newUser, HashMap<String, Int
 // change password
 public static void changePassword(int accID, String newPass, HashMap<String, Integer> loginInfo, HashMap<Integer, Account> idToAcc) {
     Account acc = idToAcc.get(accID);
-    acc.password = encrypt(newPass);
+    acc.password = Encrypt.encrypt(newPass);
     loginInfo.put(acc.email, acc.password);
     idToAcc.put(acc.id, acc);
 }
