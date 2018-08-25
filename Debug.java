@@ -6,7 +6,7 @@ public class Debug {
     public static void main(String[] args) {
         HashMap<String, LinkedList<Integer>> countries_Database = new HashMap<String, LinkedList<Integer>>();           // maps a country to all account IDs in that country
         HashMap<String, LinkedList<Integer>> interests_Database = new HashMap<String, LinkedList<Integer>>();           // maps an interest to all the account IDs with that interest
-        HashMap<String, String> loginInfo = new HashMap<String, String>();                                              // maps a user's email to their password
+        HashMap<String, Integer> loginInfo = new HashMap<String, Integer>();                                              // maps a user's email to their password
         HashMap<String, Integer> userToID = new HashMap<String, Integer>();                                             // maps a user's username to their ID
         HashMap<Integer, Account> idToAcc = new HashMap<Integer, Account>();                                            // maps a user's ID to the corresponding Account object
         HashMap<Integer, LinkedList<Integer>> idToEmbraceeIDs = new HashMap<Integer, LinkedList<Integer>>();            // maps a user's ID to their embracees' IDs
@@ -206,6 +206,7 @@ public class Debug {
         countries_Database.put("Uganda", new LinkedList<Integer>());
         countries_Database.put("Ukraine", new LinkedList<Integer>());
         countries_Database.put("United Arab E.", new LinkedList<Integer>());
+        countries_Database.put("United Kingdom", new LinkedList<Integer>());
         countries_Database.put("USA", new LinkedList<Integer>());
         countries_Database.put("Uruguay", new LinkedList<Integer>());
         countries_Database.put("Uzbekistan", new LinkedList<Integer>());
@@ -218,22 +219,22 @@ public class Debug {
 
         // TESTS SEARCH, ACCOUNT CREATION, & ADDING/REMOVING INTERESTS
 
-        Account.create("Warren", "Elwood", 19, "USA", "warren@gmail.com", "warrenelwood12", "password12", true, new Picture(args[0]),
+        Account.create("Warren", "Elwood", 19, "USA", "warren@gmail.com", "warrenelwood12", "kobepop", true, new Picture(args[0]),
         countries_Database, interests_Database, loginInfo, userToID, idToAcc);
-        Account.create("Kelvin", "Yu", 19, "China", "kelly@gmail.com", "zkyu2", "kobebyrnat24", true, new Picture(args[1]),
+        Account.create("Kelvin", "Yu", 19, "China", "kelly@gmail.com", "zkyu2", "lebronkobe", true, new Picture(args[1]),
         countries_Database, interests_Database, loginInfo, userToID, idToAcc);
-        Account.create("Nick", "Turk", 20, "USA", "nickturk@gmail.com", "nturk12", "rogerfreder33", true, new Picture(args[0]),
+        Account.create("Nick", "Turk", 20, "USA", "nickturk@gmail.com", "nturk12", "nikeadidas", true, new Picture(args[0]),
         countries_Database, interests_Database, loginInfo, userToID, idToAcc);
-        Account.create("Hong", "Xia", 50, "China", "blueberry@gmail.com", "lynna_xia", "password3", false, new Picture(args[1]),
+        Account.create("Hong", "Xia", 50, "China", "blueberry@gmail.com", "lynna_xia", "helloworld", false, new Picture(args[1]),
         countries_Database, interests_Database, loginInfo, userToID, idToAcc);
 
-        Account.addInterest(0, "Food", interests_Database, idToAcc);
-        Account.addInterest(0, "Fornite", interests_Database, idToAcc);
-        Account.addInterest(0, "Lebron James", interests_Database, idToAcc);
-        Account.addInterest(0, "Drums", interests_Database, idToAcc);
+        Account.addInterest(0, "The Food", interests_Database, idToAcc);
+        Account.addInterest(0, "The Fornite", interests_Database, idToAcc);
+        Account.addInterest(0, "The Lebron James", interests_Database, idToAcc);
+        Account.addInterest(0, "The Drums", interests_Database, idToAcc);
         Account.addInterest(0, "Music", interests_Database, idToAcc);
         Account.addInterest(1, "Food", interests_Database, idToAcc);
-        Account.addInterest(1, "Culture", interests_Database, idToAcc);
+        Account.addInterest(1, "The Culture", interests_Database, idToAcc);
         Account.addInterest(1, "China", interests_Database, idToAcc);
         Account.addInterest(1, "Investing", interests_Database, idToAcc);
         Account.addInterest(2, "Music", interests_Database, idToAcc);
@@ -243,7 +244,6 @@ public class Debug {
         Account.addInterest(3, "China", interests_Database, idToAcc);
         Account.addInterest(3, "Music", interests_Database, idToAcc);
         Account.addInterest(3, "Cooking", interests_Database, idToAcc);
-        Account.addInterest(3, "Food", interests_Database, idToAcc);
 
         Object[] matches0 = Search.search("All", "Food", countries_Database, interests_Database);                       // test Search
         Object[] matches1 = Search.search("USA", "Music", countries_Database, interests_Database);
@@ -518,5 +518,24 @@ public class Debug {
 
         for (GroupChat gc: ambassadorGCs)
         System.out.println("Ambassador Title: " + gc.showTitle());
+
+        // testing password encryption
+        System.out.println(Account.showPass(0, idToAcc));
+        System.out.println(Account.showPass(1, idToAcc));
+        System.out.println(Account.showPass(2, idToAcc));
+        System.out.println(Account.showPass(3, idToAcc));
+
+        Account.create("Warren", "Elwood", 19, "USA", "warren@gmail.com", "warrenelwood12", "kobepop", true, new Picture(args[0]),
+        countries_Database, interests_Database, loginInfo, userToID, idToAcc);
+        Account.create("Kelvin", "Yu", 19, "China", "kelly@gmail.com", "zkyu2", "lebronkobe", true, new Picture(args[1]),
+        countries_Database, interests_Database, loginInfo, userToID, idToAcc);
+        Account.create("Nick", "Turk", 20, "USA", "nickturk@gmail.com", "nturk12", "nikeadidas", true, new Picture(args[0]),
+        countries_Database, interests_Database, loginInfo, userToID, idToAcc);
+        Account.create("Hong", "Xia", 50, "China", "blueberry@gmail.com", "lynna_xia", "helloworld", false, new Picture(args[1]),
+        countries_Database, interests_Database, loginInfo, userToID, idToAcc);
+        // test login
+        System.out.println(Login.login("kelly@gmail.com", "lebronkobe", loginInfo));
+        System.out.println(Login.login("blueberry@gmail.com", "helloworld", loginInfo));
+        System.out.println(Login.login("blueberry@gmail.com", "nikeadidas", loginInfo));
     }
 }
