@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 public class Search {
 
+    // searches for users in country X with interest Y
     public static Object[] search(String country, String interest, HashMap<String, LinkedList<Integer>> countries_Database,
     HashMap<String, LinkedList<Integer>> interests_Database) {
 

@@ -10,10 +10,10 @@ public class Debug {
         HashMap<String, Integer> userToID = new HashMap<String, Integer>();                                             // maps a user's username to their ID
         HashMap<Integer, Account> idToAcc = new HashMap<Integer, Account>();                                            // maps a user's ID to the corresponding Account object
         HashMap<Integer, LinkedList<Integer>> idToEmbraceeIDs = new HashMap<Integer, LinkedList<Integer>>();            // maps a user's ID to their embracees' IDs
-        HashMap<String, GroupChat> titleToChat = new HashMap<String, GroupChat>();                                      // maps chat titles to the corresponding Groupchat objects
+        HashMap<String, LinkedList<GroupChat>> topicToChats = new HashMap<String, LinkedList<GroupChat>>();             // maps topics to the corresponding Groupchats
         HashMap<Integer, LinkedList<Post>> idToPosts = new HashMap<Integer, LinkedList<Post>>();                        // maps a user's ID to their embracees' Sonder posts
-        LinkedList<GroupChat> normalGCs = new LinkedList<GroupChat>();                                                  // list of group chats uploaded by normal users
-        LinkedList<GroupChat> ambassadorGCs = new LinkedList<GroupChat>();                                              // list of ambassador group chats
+        LinkedList<GroupChat> newestGCs = new LinkedList<GroupChat>();                                                  // list of group chats sorted by newset to oldest
+        LinkedList<GroupChat> ambassadorGCs = new LinkedList<GroupChat>();                                              // list of ambassador group chats (sorted by newest to oldest)
 
         countries_Database.put("All", new LinkedList<Integer>());
         countries_Database.put("Afghanistan", new LinkedList<Integer>());
@@ -217,6 +217,29 @@ public class Debug {
         countries_Database.put("Zambia", new LinkedList<Integer>());
         countries_Database.put("Zimbabwe", new LinkedList<Integer>());
 
+        topicToChats.put("Art", new LinkedList<GroupChat>());
+        topicToChats.put("Career", new LinkedList<GroupChat>());
+        topicToChats.put("Culture", new LinkedList<GroupChat>());
+        topicToChats.put("Economy", new LinkedList<GroupChat>());
+        topicToChats.put("Education", new LinkedList<GroupChat>());
+        topicToChats.put("Entertainment", new LinkedList<GroupChat>());
+        topicToChats.put("Environment and Nature", new LinkedList<GroupChat>());
+        topicToChats.put("Fashion", new LinkedList<GroupChat>());
+        topicToChats.put("Finance", new LinkedList<GroupChat>());
+        topicToChats.put("Food and Drink", new LinkedList<GroupChat>());
+        topicToChats.put("Health and Fitness", new LinkedList<GroupChat>());
+        topicToChats.put("History", new LinkedList<GroupChat>());
+        topicToChats.put("Other", new LinkedList<GroupChat>());
+        topicToChats.put("Music", new LinkedList<GroupChat>());
+        topicToChats.put("News", new LinkedList<GroupChat>());
+        topicToChats.put("Politics", new LinkedList<GroupChat>());
+        topicToChats.put("Philosophy", new LinkedList<GroupChat>());
+        topicToChats.put("Religion", new LinkedList<GroupChat>());
+        topicToChats.put("Science and Technology", new LinkedList<GroupChat>());
+        topicToChats.put("Society", new LinkedList<GroupChat>());
+        topicToChats.put("Sports", new LinkedList<GroupChat>());
+        topicToChats.put("Travel", new LinkedList<GroupChat>());
+
         // TESTS SEARCH, ACCOUNT CREATION, & ADDING/REMOVING INTERESTS
 
         Account.create("Warren", "Elwood", 19, "USA", "warren@gmail.com", "warrenelwood12", "kobepop", true, new Picture(args[0]),
@@ -229,7 +252,7 @@ public class Debug {
         countries_Database, interests_Database, loginInfo, userToID, idToAcc);
 
         Account.addInterest(0, "The Food", interests_Database, idToAcc);
-        Account.addInterest(0, "The Fornite", interests_Database, idToAcc);
+        Account.addInterest(0, "The Fortnite", interests_Database, idToAcc);
         Account.addInterest(0, "The Lebron James", interests_Database, idToAcc);
         Account.addInterest(0, "The Drums", interests_Database, idToAcc);
         Account.addInterest(0, "Music", interests_Database, idToAcc);
@@ -328,11 +351,11 @@ public class Debug {
             System.out.println(m.toVisual());                                                                          // prints all messages in indChat0
         }
 
-        GroupChat groupChat0 = new GroupChat(1, "Is Trump a good president?", titleToChat, idToAcc, normalGCs, ambassadorGCs);
+        GroupChat groupChat0 = new GroupChat(1, "Politics", "Is Trump a good president?", topicToChats, idToAcc, newestGCs, ambassadorGCs);
         groupChat0.addUser(0, idToAcc);
         groupChat0.addUser(2, idToAcc);
         groupChat0.addUser(3, idToAcc);
-        groupChat0.removeUser(2, idToAcc, titleToChat);
+        groupChat0.removeUser(2, idToAcc, topicToChats);
 
         groupChat0.addMessage("Do y'all like Donald Trump?", null, null, 0, idToAcc);
         groupChat0.addMessage("What's wrong with him?", null, null, 1, idToAcc);
@@ -366,45 +389,37 @@ public class Debug {
         System.out.println();
 
         // TEST DISCUSSION SEARCH
-        GroupChat groupChat1 = new GroupChat(1, "I love Barack Obama.", titleToChat, idToAcc, normalGCs, ambassadorGCs);
-        GroupChat groupChat2 = new GroupChat(2, "I hate Donald Trump!", titleToChat, idToAcc, normalGCs, ambassadorGCs);
-        GroupChat groupChat3 = new GroupChat(1, "What are some good things Trump has done?", titleToChat, idToAcc, normalGCs, ambassadorGCs);
-        GroupChat groupChat4 = new GroupChat(0, "I love Kendrick", titleToChat, idToAcc, normalGCs, ambassadorGCs);
-        GroupChat groupChat5 = new GroupChat(1, "I love nice people.", titleToChat, idToAcc, normalGCs, ambassadorGCs);
-        GroupChat groupChat6 = new GroupChat(2, "Is Trump a bad president?", titleToChat, idToAcc, normalGCs, ambassadorGCs);
-        GroupChat groupChat7 = new GroupChat(3, "I love food.", titleToChat, idToAcc, normalGCs, ambassadorGCs);
-        GroupChat groupChat8 = new GroupChat(1, "Private equity is fun.", titleToChat, idToAcc, normalGCs, ambassadorGCs);
-        GroupChat groupChat9 = new GroupChat(0, "Venture capital is fun.", titleToChat, idToAcc, normalGCs, ambassadorGCs);
-        GroupChat.deleteChat(groupChat5, titleToChat);
-        groupChat1.removeUser(1, idToAcc, titleToChat);
+        GroupChat groupChat1 = new GroupChat(1, "Politics", "I love Barack Obama.", topicToChats, idToAcc, newestGCs, ambassadorGCs);
+        GroupChat groupChat2 = new GroupChat(2, "Politics", "I hate Donald Trump!", topicToChats, idToAcc, newestGCs, ambassadorGCs);
+        GroupChat groupChat3 = new GroupChat(1, "Politics", "What are some good things Trump has done?", topicToChats, idToAcc, newestGCs, ambassadorGCs);
+        GroupChat groupChat4 = new GroupChat(0, "Music", "I love Kendrick", topicToChats, idToAcc, newestGCs, ambassadorGCs);
+        GroupChat groupChat5 = new GroupChat(1, "Other", "I love nice people.", topicToChats, idToAcc, newestGCs, ambassadorGCs);
+        GroupChat groupChat6 = new GroupChat(2, "Politics", "Is Trump a bad president?", topicToChats, idToAcc, newestGCs, ambassadorGCs);
+        GroupChat groupChat7 = new GroupChat(3, "Food and Drink", "I love food.", topicToChats, idToAcc, newestGCs, ambassadorGCs);
+        GroupChat groupChat8 = new GroupChat(1, "Career", "Private equity is fun.", topicToChats, idToAcc, newestGCs, ambassadorGCs);
+        GroupChat groupChat9 = new GroupChat(0, "Economy", "Venture capital is fun.", topicToChats, idToAcc, newestGCs, ambassadorGCs);
+        GroupChat.deleteChat(groupChat5, topicToChats);
+        groupChat1.removeUser(1, idToAcc, topicToChats);
 
-        GroupChat[] matches8 = SearchDiscussions.search("Trump", titleToChat);                                          // test DiscussionSearch
-        GroupChat[] matches9 = SearchDiscussions.search("love", titleToChat);
-        GroupChat[] matches10 = SearchDiscussions.search("trump", titleToChat);
+        Queue<GroupChat> matches8 = SearchDiscussions.search("Politics", topicToChats);
+        Queue<GroupChat> matches9 = SearchDiscussions.search("Music", topicToChats);
+        Queue<GroupChat> matches10 = SearchDiscussions.search("Other", topicToChats);
 
-        for (String t : titleToChat.keySet())
+        for (String t : topicToChats.keySet())                                                                          // prints all chat topics
         System.out.println(t);
 
-        System.out.println("Chat titles with 'Trump' : ");
-        for (int i = 0; i < matches8.length; i++) {
-            if (matches8[i] == null)
-            continue;
-            System.out.println(matches8[i].showTitle());
-        }
+        System.out.println("Politics chats : ");
+        for (GroupChat gc : matches8)
+            System.out.println(gc.showTitle());
 
-        System.out.println("Chat titles with 'love' : ");
-        for (int i = 0; i < matches9.length; i++) {
-            if (matches9[i] == null)
-            continue;
-            System.out.println(matches9[i].showTitle());
-        }
 
-        System.out.println("Chat titles with 'trump' : ");
-        for (int i = 0; i < matches10.length; i++) {
-            if (matches10[i] == null)
-            continue;
-            System.out.println(matches10[i].showTitle());
-        }
+        System.out.println("Music chats: ");
+        for (GroupChat gc : matches9)
+            System.out.println(gc.showTitle());
+
+        System.out.println("Other chats: ");
+        for (GroupChat gc : matches10)
+            System.out.println(gc.showTitle());
 
         // TESTS EMBRACING PEOPLE
         Account.sendEmbrace(0, 1, idToAcc);
@@ -513,7 +528,7 @@ public class Debug {
         }
 
         // TESTS SHOWING LIST OF AMBASSADOR AND PUBLIC CHATS
-        for (GroupChat gc: normalGCs)
+        for (GroupChat gc: newestGCs)
         System.out.println("Title: " + gc.showTitle());
 
         for (GroupChat gc: ambassadorGCs)
@@ -525,17 +540,18 @@ public class Debug {
         System.out.println(Account.showPass(2, idToAcc));
         System.out.println(Account.showPass(3, idToAcc));
 
-        Account.create("Warren", "Elwood", 19, "USA", "warren@gmail.com", "warrenelwood12", "kobepop", true, new Picture(args[0]),
-        countries_Database, interests_Database, loginInfo, userToID, idToAcc);
-        Account.create("Kelvin", "Yu", 19, "China", "kelly@gmail.com", "zkyu2", "lebronkobe", true, new Picture(args[1]),
-        countries_Database, interests_Database, loginInfo, userToID, idToAcc);
-        Account.create("Nick", "Turk", 20, "USA", "nickturk@gmail.com", "nturk12", "nikeadidas", true, new Picture(args[0]),
-        countries_Database, interests_Database, loginInfo, userToID, idToAcc);
-        Account.create("Hong", "Xia", 50, "China", "blueberry@gmail.com", "lynna_xia", "helloworld", false, new Picture(args[1]),
-        countries_Database, interests_Database, loginInfo, userToID, idToAcc);
         // test login
         System.out.println(Login.login("kelly@gmail.com", "lebronkobe", loginInfo));
         System.out.println(Login.login("blueberry@gmail.com", "helloworld", loginInfo));
         System.out.println(Login.login("blueberry@gmail.com", "nikeadidas", loginInfo));
+
+        // test Autocomplete
+        Term[] match0 = Autocomplete.autocomplete("C", interests_Database);                                             // China, Cooking, Culture
+        for (Term match : match0)
+        System.out.println(match.toString());
+
+        Term[] match1 = Autocomplete.autocomplete("Fo", interests_Database);                                             // Food, Fortnite
+        for (Term match : match1)
+        System.out.println(match.toString());
     }
 }

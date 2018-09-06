@@ -4,7 +4,8 @@ import java.util.HashMap;
 public class GroupChat {
 
     private Queue<Message> queue;               // queue of messages
-    private String title;                       // title of chat (title = null if DM, otherwise title = question uploaded by user who started the group chat)
+    private String title;                       // title of chat
+    private String topic;                       // topic/category this chat falls under
     private LinkedList<Integer> users;          // users in the chat
     private boolean type;                       // true is mes, false is group chat
     private int admin;                          // user id of creator/admin of chat
@@ -54,44 +55,34 @@ public class GroupChat {
 
     }
 
-    // initializes an empty chat
-    public GroupChat(int id, String title, HashMap<String, GroupChat> titleToChat, HashMap<Integer, Account> idToAcc,
-    LinkedList<GroupChat> normalGCs, LinkedList<GroupChat> ambassadorGCs) {
+    // initializes an empty chat, id is the account id number of chat creator
+    public GroupChat(int id, String topic, String title, HashMap<String, LinkedList<GroupChat>> topicToChats, HashMap<Integer, Account> idToAcc,
+    LinkedList<GroupChat> newestGCs, LinkedList<GroupChat> ambassadorGCs) {
         checkLength(title);
         checkProfanity(title);
-        if (titleToChat.containsKey(title) && !titleToChat.get(title).isFull()) {
-            Account.addGroupChat(id, titleToChat.get(title), idToAcc);         // if the exact same question exists & chat is not full, add the user to the existing chat
-        }
+        if (!topicToChats.containsKey(topic))
+            throw new IllegalArgumentException("Invalid topic!");
 
         this.queue = new Queue<Message>();
         this.users = new LinkedList<Integer>();
         this.type = type;
         this.title = title;
+        this.topic = topic;
         this.admin = id;
         this.report_Num = 0;
         addUser(id, idToAcc);                                                          // add creator of chat to list of chat users
-        updateChats(id, title, titleToChat, idToAcc, normalGCs, ambassadorGCs);
+        updateChats(id, topic, title, topicToChats, idToAcc, newestGCs, ambassadorGCs);
     }
 
-    private void updateChats(int id, String title, HashMap<String, GroupChat> titleToChat, HashMap<Integer, Account> idToAcc,
-    LinkedList<GroupChat> normalGCs, LinkedList<GroupChat> ambassadorGCs) {
+    private void updateChats(int id, String topic, String title, HashMap<String, LinkedList<GroupChat>> topicToChats, HashMap<Integer, Account> idToAcc,
+    LinkedList<GroupChat> newestGCs, LinkedList<GroupChat> ambassadorGCs) {
 
-        if (titleToChat.containsKey(title) && titleToChat.get(title).isFull()) {   // if exact same question exists & other chat is full, create chat w/ a modified title
-            this.title = title + " ";
-            titleToChat.put(this.title, this);
-            Account.addGroupChat(id, this, idToAcc);
-            normalGCs.addFirst(this);
-            if (Account.checkAmbassador(id, idToAcc))                        // add to ambassador chat if applicable
-            ambassadorGCs.addFirst(this);
-        }
-
-        else {                                                 // if question doesn't exist, add it to hashmap and lists with no changes
-        titleToChat.put(title, this);
+        LinkedList<GroupChat> chats = topicToChats.get(topic);
+        chats.addFirst(this);
         Account.addGroupChat(id, this, idToAcc);
-        normalGCs.addFirst(this);
+        newestGCs.addFirst(this);
         if (Account.checkAmbassador(id, idToAcc))                        // add to ambassador chat if applicable
         ambassadorGCs.addFirst(this);
-    }
 }
 
 public void addMessage(String m, Audio v, Picture p, int id, HashMap<Integer, Account> idToAcc) {
@@ -120,8 +111,9 @@ private void checkProfanity(String m) {
 }
 
 // delete chat if all users leave it and update database of group chats, or delete chat if admin deletes it
-public static void deleteChat(GroupChat chat, HashMap<String, GroupChat> titleToChat) {
-    titleToChat.remove(chat.title);
+public static void deleteChat(GroupChat chat, HashMap<String, LinkedList<GroupChat>> topicToChats) {
+    LinkedList<GroupChat> chats = topicToChats.get(chat.topic);
+    chats.remove(chat);
     chat = null;
 }
 
@@ -151,7 +143,7 @@ public void addUser(int id, HashMap<Integer, Account> idToAcc) {
 }
 
 // leave chat
-public void removeUser(int id, HashMap<Integer, Account> idToAcc, HashMap<String, GroupChat> titleToChat) {
+public void removeUser(int id, HashMap<Integer, Account> idToAcc, HashMap<String, LinkedList<GroupChat>> topicToChats) {
     if (isEmpty())
     throw new IllegalArgumentException("Empty chat!");
 
@@ -159,13 +151,13 @@ public void removeUser(int id, HashMap<Integer, Account> idToAcc, HashMap<String
     Account.leaveGroupChat(id, this, idToAcc);                                                                           // updates chats assoaciated with account that left
 
     if (this.users.size() == 0)
-    deleteChat(this, titleToChat);
+    deleteChat(this, topicToChats);
 }
 
-public void report(HashMap<String, GroupChat> titleToChat) {
+public void report(HashMap<String, LinkedList<GroupChat>> topicToChats) {
     this.report_Num++;
     if (this.report_Num == 7)
-    deleteChat(this, titleToChat);
+    deleteChat(this, topicToChats);
 }
 
 private boolean isFull() {
