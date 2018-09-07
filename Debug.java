@@ -1,12 +1,15 @@
 import java.util.HashMap;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.security.MessageDigest;
+import java.nio.charset.StandardCharsets;
+import java.security.NoSuchAlgorithmException;
 
 public class Debug {
     public static void main(String[] args) {
         HashMap<String, LinkedList<Integer>> countries_Database = new HashMap<String, LinkedList<Integer>>();           // maps a country to all account IDs in that country
         HashMap<String, LinkedList<Integer>> interests_Database = new HashMap<String, LinkedList<Integer>>();           // maps an interest to all the account IDs with that interest
-        HashMap<String, Integer> loginInfo = new HashMap<String, Integer>();                                              // maps a user's email to their password
+        HashMap<String, String> loginInfo = new HashMap<String, String>();                                              // maps a user's email to their password
         HashMap<String, Integer> userToID = new HashMap<String, Integer>();                                             // maps a user's username to their ID
         HashMap<Integer, Account> idToAcc = new HashMap<Integer, Account>();                                            // maps a user's ID to the corresponding Account object
         HashMap<Integer, LinkedList<Integer>> idToEmbraceeIDs = new HashMap<Integer, LinkedList<Integer>>();            // maps a user's ID to their embracees' IDs
@@ -410,16 +413,16 @@ public class Debug {
 
         System.out.println("Politics chats : ");
         for (GroupChat gc : matches8)
-            System.out.println(gc.showTitle());
+        System.out.println(gc.showTitle());
 
 
         System.out.println("Music chats: ");
         for (GroupChat gc : matches9)
-            System.out.println(gc.showTitle());
+        System.out.println(gc.showTitle());
 
         System.out.println("Other chats: ");
         for (GroupChat gc : matches10)
-            System.out.println(gc.showTitle());
+        System.out.println(gc.showTitle());
 
         // TESTS EMBRACING PEOPLE
         Account.sendEmbrace(0, 1, idToAcc);
@@ -541,17 +544,18 @@ public class Debug {
         System.out.println(Account.showPass(3, idToAcc));
 
         // test login
-        System.out.println(Login.login("kelly@gmail.com", "lebronkobe", loginInfo));
-        System.out.println(Login.login("blueberry@gmail.com", "helloworld", loginInfo));
-        System.out.println(Login.login("blueberry@gmail.com", "nikeadidas", loginInfo));
+        System.out.println(Login.login("kelly@gmail.com", "lebronkobe", loginInfo));                                    // true
+        System.out.println(Login.login("blueberry@gmail.com", "helloworld", loginInfo));                                // false
+        System.out.println(Login.login("blueberry@gmail.com", "nickthefrick", loginInfo));                              // true
 
         // test Autocomplete
         Term[] match0 = Autocomplete.autocomplete("C", interests_Database);                                             // China, Cooking, Culture
         for (Term match : match0)
         System.out.println(match.toString());
 
-        Term[] match1 = Autocomplete.autocomplete("Fo", interests_Database);                                             // Food, Fortnite
+        Term[] match1 = Autocomplete.autocomplete("Fo", interests_Database);                                            // Food, Fortnite
         for (Term match : match1)
         System.out.println(match.toString());
+
     }
 }

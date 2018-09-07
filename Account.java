@@ -12,7 +12,7 @@ public class Account {
     private boolean gender, ambassador; // true is M, false is F for gender
     private int id; // user id
     private int age; // user age
-    private int password; // hashed-int value of password
+    private String password; // hexadecimal representation of hashed bytes of String password
     private String[] interests; // all interests associated with a particular acc
     private LinkedList<GroupChat> groupchats; // all group chats associated with a particular acc
     private LinkedList<IndividualChat> indchats; // all individual chats associated with a particular acc
@@ -24,7 +24,7 @@ public class Account {
     private boolean suspended; // if reports > 5 then suspend acc
 
     // constructor
-    public Account(String first, String last, int age, String country, String email, String username, int password,
+    public Account(String first, String last, int age, String country, String email, String username, String password,
     boolean gender, Picture pic, HashMap<Integer, Account> idToAcc) {
         this.first = first;
         this.last = last;
@@ -49,7 +49,7 @@ public class Account {
     // creates new account
     public static void create(String f, String l, int a, String c, String e, String u, String p, boolean g, Picture picture,
     HashMap<String, LinkedList<Integer>> countries_Database, HashMap<String, LinkedList<Integer>> interests_Database,
-    HashMap<String, Integer> loginInfo, HashMap<String, Integer> userToID, HashMap<Integer, Account> idToAcc) {
+    HashMap<String, String> loginInfo, HashMap<String, Integer> userToID, HashMap<Integer, Account> idToAcc) {
 
         // check if arguments are allowed
         checkProfanity(f);
@@ -59,7 +59,7 @@ public class Account {
         checkEmailValidity(e, loginInfo);
         checkPasswordLength(p);
         checkAge(a);
-        int pass = Encrypt.encrypt(p);
+        String pass = Encrypt.encrypt(p);
 
         Account newUser = new Account(f, l, a, c, e, u, pass, g, picture, idToAcc);
         idToAcc.put(newUser.id, newUser);
@@ -78,7 +78,7 @@ public class Account {
     }
 
     // throws error if not a valid email
-    private static void checkEmailValidity(String e, HashMap<String, Integer> loginInfo) {
+    private static void checkEmailValidity(String e, HashMap<String, String> loginInfo) {
         // check if username and email are available
         if (!loginInfo.isEmpty()) {
             if (loginInfo.containsKey(e))
@@ -365,7 +365,7 @@ public static LinkedList<Integer> showEmbraceRequests(int accID, HashMap<Integer
 }
 
 // change email
-public static void changeEmail(int accID, String newEmail, HashMap<String, Integer> loginInfo, HashMap<Integer, Account> idToAcc) {
+public static void changeEmail(int accID, String newEmail, HashMap<String, String> loginInfo, HashMap<Integer, Account> idToAcc) {
     Account acc = idToAcc.get(accID);
     loginInfo.remove(acc.email);
     acc.email = newEmail;
@@ -383,7 +383,7 @@ public static void changeUsername(int accID, String newUser, HashMap<String, Int
 }
 
 // change password
-public static void changePassword(int accID, String newPass, HashMap<String, Integer> loginInfo, HashMap<Integer, Account> idToAcc) {
+public static void changePassword(int accID, String newPass, HashMap<String, String> loginInfo, HashMap<Integer, Account> idToAcc) {
     Account acc = idToAcc.get(accID);
     acc.password = Encrypt.encrypt(newPass);
     loginInfo.put(acc.email, acc.password);
@@ -405,7 +405,7 @@ public static String showLastName(int accID, HashMap<Integer, Account> idToAcc) 
     return acc.last;
 }
 
-public static int showPass(int accID, HashMap<Integer, Account> idToAcc) {
+public static String showPass(int accID, HashMap<Integer, Account> idToAcc) {
     Account acc = idToAcc.get(accID);
     return acc.password;
 }

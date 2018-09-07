@@ -1,6 +1,9 @@
+import java.util.HashMap;
+
 public class Login {
-    public boolean Login (String email, String pass, RedBlackBST<String, String> loginInfo) {
-    if (pass.equals(loginInfo.get(email)))
+    public static boolean login (String email, String pass, HashMap<String, String> loginInfo) {
+    String hash = Encrypt.encrypt(pass);
+    if (hash.equals(loginInfo.get(email)))
         return true;
     else
     return false;
