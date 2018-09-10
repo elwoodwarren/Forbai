@@ -7,7 +7,7 @@ public class GroupChat {
     private String title;                       // title of chat
     private String topic;                       // topic/category this chat falls under
     private LinkedList<Integer> users;          // users in the chat
-    private boolean type;                       // true is mes, false is group chat
+    private boolean ambassador;                 // true if it's an ambassador chat, false if normal
     private int admin;                          // user id of creator/admin of chat
     private static final int groupCapacity = 8;
     private int report_Num;                     // number of reports this group chat has
@@ -56,116 +56,135 @@ public class GroupChat {
     }
 
     // initializes an empty chat, id is the account id number of chat creator
-    public GroupChat(int id, String topic, String title, HashMap<String, LinkedList<GroupChat>> topicToChats, HashMap<Integer, Account> idToAcc,
-    LinkedList<GroupChat> newestGCs, LinkedList<GroupChat> ambassadorGCs) {
+    public GroupChat(int id, String topic, String title, HashMap<String, LinkedList<GroupChat>> topicToChats,
+    HashMap<String, LinkedList<GroupChat>> ambassadorChats, HashMap<Integer, Account> idToAcc) {
         checkLength(title);
         checkProfanity(title);
         if (!topicToChats.containsKey(topic))
-            throw new IllegalArgumentException("Invalid topic!");
+        throw new IllegalArgumentException("Invalid topic!");
 
         this.queue = new Queue<Message>();
         this.users = new LinkedList<Integer>();
-        this.type = type;
+        this.ambassador = Account.isAmbassador(id, idToAcc);
         this.title = title;
         this.topic = topic;
         this.admin = id;
         this.report_Num = 0;
         addUser(id, idToAcc);                                                          // add creator of chat to list of chat users
-        updateChats(id, topic, title, topicToChats, idToAcc, newestGCs, ambassadorGCs);
+
+        // add group chat to user's account
+        Account.addGroupChat(id, this, idToAcc);
+
+        updateChats(id, topic, title, topicToChats, idToAcc);
+
+        // add to ambassador chats if user is an ambassador
+        if (Account.isAmbassador(id, idToAcc))
+        updateChats(id, topic, title, ambassadorChats, idToAcc);
     }
 
-    private void updateChats(int id, String topic, String title, HashMap<String, LinkedList<GroupChat>> topicToChats, HashMap<Integer, Account> idToAcc,
-    LinkedList<GroupChat> newestGCs, LinkedList<GroupChat> ambassadorGCs) {
-
+    private void updateChats(int id, String topic, String title, HashMap<String, LinkedList<GroupChat>> topicToChats,
+    HashMap<Integer, Account> idToAcc) {
+        // update databases
         LinkedList<GroupChat> chats = topicToChats.get(topic);
         chats.addFirst(this);
-        Account.addGroupChat(id, this, idToAcc);
-        newestGCs.addFirst(this);
-        if (Account.checkAmbassador(id, idToAcc))                        // add to ambassador chat if applicable
-        ambassadorGCs.addFirst(this);
-}
+        LinkedList<GroupChat> allchats = topicToChats.get("All");
+        allchats.addFirst(this);
+    }
 
-public void addMessage(String m, Audio v, Picture p, int id, HashMap<Integer, Account> idToAcc) {
-    checkProfanity(m);
-    checkSuspended(id, idToAcc);
-    Message newMsg = new Message(m, v, p, id);
-    queue.enqueue(newMsg);
-}
+    public void addMessage(String m, Audio v, Picture p, int id, HashMap<Integer, Account> idToAcc) {
+        checkProfanity(m);
+        checkSuspended(id, idToAcc);
+        Message newMsg = new Message(m, v, p, id);
+        queue.enqueue(newMsg);
+    }
 
-// checks if the user is suspended (i.e. if they have 5+ reports). if yes, set report count to 0 and ban them from sending messages for a day. <- how to do this?
-private void checkSuspended(int id, HashMap<Integer, Account> idToAcc) {
-    if (Account.reportNum(id, idToAcc) >= 5)
-    throw new IllegalArgumentException("5+ users have reported you for misconduct. Please wait one day before sending more messages.");
-}
+    // checks if the user is suspended (i.e. if they have 5+ reports). if yes, set report count to 0 and ban them from sending messages for a day. <- how to do this?
+    private void checkSuspended(int id, HashMap<Integer, Account> idToAcc) {
+        if (Account.reportNum(id, idToAcc) >= 5)
+        throw new IllegalArgumentException("5+ users have reported you for misconduct. Please wait one day before sending more messages.");
+    }
 
-private void checkLength(String t) {
-    if (t.length() > 50)
-    throw new IllegalArgumentException("Please keep titles to under 50 characters!");
-}
+    private void checkLength(String t) {
+        if (t.length() > 50)
+        throw new IllegalArgumentException("Please keep titles to under 50 characters!");
+    }
 
-// returns true if message contains profanity
-private void checkProfanity(String m) {
-    if (m.contains("Fuck") || m.contains("fuck") || m.contains("Shit") || m.contains("shit") || m.contains("Bitch") || m.contains("bitch")
-    || m.contains("Cunt") || m.contains("cunt") || m.contains("Nigger") || m.contains("nigger") || m.contains("Ass") || m.contains("ass"))
-    throw new IllegalArgumentException("Please help us keep group discussions a healthy place for discussion by not using profane language :)");
-}
+    // returns true if message contains profanity
+    private void checkProfanity(String m) {
+        if (m.contains("Fuck") || m.contains("fuck") || m.contains("Shit") || m.contains("shit") || m.contains("Bitch") || m.contains("bitch")
+        || m.contains("Cunt") || m.contains("cunt") || m.contains("Nigger") || m.contains("nigger") || m.contains("Ass") || m.contains("ass"))
+        throw new IllegalArgumentException("Please help us keep group discussions a healthy place for discussion by not using profane language :)");
+    }
 
-// delete chat if all users leave it and update database of group chats, or delete chat if admin deletes it
-public static void deleteChat(GroupChat chat, HashMap<String, LinkedList<GroupChat>> topicToChats) {
-    LinkedList<GroupChat> chats = topicToChats.get(chat.topic);
-    chats.remove(chat);
-    chat = null;
-}
+    // delete chat if all users leave it and update database of group chats, or delete chat if admin deletes it
+    public static void deleteChat(GroupChat chat, HashMap<String, LinkedList<GroupChat>> topicToChats, HashMap<String, LinkedList<GroupChat>> ambassadorChats) {
+        String topic = chat.topic;
+        boolean isAmbassador = chat.ambassador;
 
-// show all user IDs in a chat
-public Object[] showUsers() {
-    return users.toArray();
-}
+        LinkedList<GroupChat> chats = topicToChats.get(topic);
+        chats.remove(chat);
+        LinkedList<GroupChat> allChats = topicToChats.get("All");
+        allChats.remove(chat);
 
-public String showTitle() {
-    return title;
-}
+        if (isAmbassador) {
+            LinkedList<GroupChat> ambChats = ambassadorChats.get(topic);
+            ambChats.remove(chat);
+            LinkedList<GroupChat> allAmbChats = ambassadorChats.get("All");
+            allAmbChats.remove(chat);
+        }
+        chat = null;
+    }
 
-public Queue<Message> history() {
-    return queue;
-}
+    // show all user IDs in a chat
+    public Object[] showUsers() {
+        return users.toArray();
+    }
 
-// returns the account ID of the admin of the chat
-public int showAdmin() {
-    return this.admin;
-}
+    public String showTitle() {
+        return title;
+    }
 
-// adds user to group chat
-public void addUser(int id, HashMap<Integer, Account> idToAcc) {
-    if (isFull())
-    throw new IllegalArgumentException("Chat is full!");
-    this.users.add(id);
-}
+    public Queue<Message> history() {
+        return queue;
+    }
 
-// leave chat
-public void removeUser(int id, HashMap<Integer, Account> idToAcc, HashMap<String, LinkedList<GroupChat>> topicToChats) {
-    if (isEmpty())
-    throw new IllegalArgumentException("Empty chat!");
+    // returns the account ID of the admin of the chat
+    public int showAdmin() {
+        return this.admin;
+    }
 
-    this.users.removeFirstOccurrence(id);
-    Account.leaveGroupChat(id, this, idToAcc);                                                                           // updates chats assoaciated with account that left
+    // adds user to group chat
+    public void addUser(int id, HashMap<Integer, Account> idToAcc) {
+        if (isFull())
+        throw new IllegalArgumentException("Chat is full!");
+        this.users.add(id);
+    }
 
-    if (this.users.size() == 0)
-    deleteChat(this, topicToChats);
-}
+    // leave chat
+    public void removeUser(int id, HashMap<Integer, Account> idToAcc, HashMap<String, LinkedList<GroupChat>> topicToChats,
+    HashMap<String, LinkedList<GroupChat>> ambassadorChats) {
+        if (isEmpty())
+        throw new IllegalArgumentException("Empty chat!");
 
-public void report(HashMap<String, LinkedList<GroupChat>> topicToChats) {
-    this.report_Num++;
-    if (this.report_Num == 7)
-    deleteChat(this, topicToChats);
-}
+        this.users.removeFirstOccurrence(id);
+        Account.leaveGroupChat(id, this, idToAcc);                                                                           // updates chats assoaciated with account that left
 
-private boolean isFull() {
-    return users.size() == groupCapacity;
-}
+        if (this.users.size() == 0)
+        deleteChat(this, topicToChats, ambassadorChats);
+    }
 
-private boolean isEmpty() {
-    return users.size() == 0;
-}
+    public void report(HashMap<String, LinkedList<GroupChat>> topicToChats, HashMap<String, LinkedList<GroupChat>> ambassadorChats) {
+        this.report_Num++;
+        if (this.report_Num == 7)
+        deleteChat(this, topicToChats, ambassadorChats);
+    }
+
+    private boolean isFull() {
+        return users.size() == groupCapacity;
+    }
+
+    private boolean isEmpty() {
+        return users.size() == 0;
+    }
 
 }

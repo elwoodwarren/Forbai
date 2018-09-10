@@ -426,7 +426,7 @@ public static void makeAmbassador(int accID, HashMap<Integer, Account> idToAcc) 
 }
 
 // is the user an ambassador?
-public static boolean checkAmbassador(int accID, HashMap<Integer, Account> idToAcc) {
+public static boolean isAmbassador(int accID, HashMap<Integer, Account> idToAcc) {
     Account acc = idToAcc.get(accID);
     return acc.ambassador;
 }
@@ -489,6 +489,8 @@ public static int reportNum(int accID, HashMap<Integer, Account> idToAcc) {
 
 // shows all Sonder posts of your embracees in chronological order
 public static LinkedList<Post> showEmbraceePosts(int accID, HashMap<Integer, LinkedList<Post>> idToPosts) {
+    if (idToPosts.get(accID) == null)
+        return null;
     return idToPosts.get(accID);
 }
 
